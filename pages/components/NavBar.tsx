@@ -21,7 +21,17 @@ function NavBar()
                 <p id="nameuser">User-1032</p>
                 <p id="online"><span>Online</span><img src="../new-moon.png" alt="Photo" width={10} height={10} /></p>
                 </div>
-            <img src="../user.jpg" alt="Photo" width={75} height={70} />
+            <img src="../user.jpg" alt="Photo" width={65} height={60} />
+            {/* <div className="click-img">
+                <div className="click-img choice first">
+                <img src="../setting.png" alt="Photo" width={20} height={20} />
+                    <p>Setting</p>
+                </div>
+                <div className="click-img choice">
+                <img src="../logout.png" alt="Photo" width={20} height={20} />
+                    <p>Log Out</p>
+                </div>
+            </div> */}
             </div>
         </div>
     );

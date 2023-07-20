@@ -7,10 +7,6 @@ function Section()
             <div className="section-image">
             <img src="../abstract-wavy-background.jpg" alt="Photo" />
             </div>
-            <div className="identification-user">
-            <img src="../user.jpg" alt="Photo" width={120} height={120} />
-            <p id="nameuser">User-1032</p>
-            </div>
             <div className="identification">
                 <div className="identification-header one">
                 <div className="identification-information">
@@ -28,6 +24,10 @@ function Section()
                     <p>82</p>
                 </div>
                 </div>
+                <div className="identification-user">
+            <img src="../user.jpg" alt="Photo" width={120} height={120} />
+            <p id="nameuser">User-1032</p>
+            </div>
                 <div className="identification-header two">
                 <div className="identification-information">
                     <h3>Location</h3>
