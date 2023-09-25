@@ -160,18 +160,37 @@ function NavBar()
             console.log('Disconnected from WebSocket server');
           });
     
-          newSocket.on("notification", (notificationData) => {
-            // if (notificationData === socket.id)
-            // {
-            setnotificationrequest(true);
-            settablenotification((prevTablenotification) => [
-              ...prevTablenotification,
-              notificationData,
-            ]);
-            // }
-          });
           newSocket.on("sendlist", (notificationlist) => {
+            if (notificationlist)
+            {
             settablenotification(notificationlist);
+            }
+          });
+
+          newSocket.on("notification", (notificationData) => {
+            if (notificationData)
+            {
+                interface NotificationTableItem {
+                    id: number;
+                    user2Username: string;
+                    user2Avatar: string;
+                    type: string;
+                };
+                const table: NotificationTableItem[] = [];
+                              
+                // Add the transformedData object to the table
+                const transformedData = {
+                  id: notificationData.id,
+                  user2Username: notificationData.username,
+                  user2Avatar: notificationData.avatar,
+                  type: 'ACCEPTED_INVITATION',
+                };
+                setnotificationrequest(true);
+                settablenotification((prevTablenotification) => [
+                  ...prevTablenotification,
+                  transformedData,
+                ]);
+            }
           });
     
           return () => {
@@ -191,7 +210,6 @@ function NavBar()
             setupdateFriend(filterFriends);
         }
     }, [searchQuery]);
-
     return (
         <>
         <div className={NavBarCSS.nav}>

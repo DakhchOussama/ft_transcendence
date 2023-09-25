@@ -24,13 +24,38 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         const clientRoom = `room_${payload.userId}`;
         client.join(clientRoom);
         const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
-        client.emit('sendlist', notificationtable);
+        console.log('notification table : ', notificationtable);
+        if (notificationtable.length)
+            client.emit('sendlist', notificationtable);
         
-        client.on('sendNotification', (notificationData: any) => {
+        client.on('sendNotification', async (notificationData: any) => {
             const targetClientRoom = `room_${notificationData.user_id}`;
-
-            // this.user.createNotification(payload.userId,notificationData.user_id, notificationData.type);
-            this.server.to(targetClientRoom).emit('notification', this.user.createNotification(payload.userId,notificationData.user_id, notificationData.type));
+            const testtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
+            try {
+                let check = false;
+                if (testtable.length)
+                {
+                    testtable.map((notif) => {
+                        if (notif.id == notificationData.user_id)
+                            check = true;
+                    })
+                    if (check = false)
+                    {
+                        const notification = await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
+                        const notificationtable = await this.user.findUserByID(payload.userId);
+                        this.server.to(targetClientRoom).emit('notification', notificationtable);
+                    }
+                }
+                else
+                {
+                    const notification = await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
+                        const notificationtable = await this.user.findUserByID(payload.userId);
+                        this.server.to(targetClientRoom).emit('notification', notificationtable);
+                }
+            } catch (error) {
+                console.error('Error creating notification:', error);
+                // Handle the error as needed
+            }
         });
         client.on('reponserequest', (response: string) => {
             if (response === 'accept')

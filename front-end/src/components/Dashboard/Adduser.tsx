@@ -8,8 +8,8 @@ import Cookies from "js-cookie";
 function AddUser()
 {
     const [searchQuery, setsearchQuery] = useState('');
-    const [userFriend, setuserFriend] = useState<{ id: number; username: string; avatar: string; status: string }[]>([]);
-    const [updateFriend, setupdateFriend] = useState<{id: number; username: string; avatar: string; status: string }[]>([]);
+    const [userFriend, setuserFriend] = useState<{ id: string; username: string; avatar: string; status: string }[]>([]);
+    const [updateFriend, setupdateFriend] = useState<{id: string; username: string; avatar: string; status: string }[]>([]);
     const [socket, setsocket] = useState<Socket| null>(null);
     const JwtToken = Cookies.get("access_token");
 
@@ -46,7 +46,7 @@ function AddUser()
       }, []);
     
 
-    function handleclickButtom(user_id: number)
+    function handleclickButtom(user_id: string)
     {
         console.log('NEXT notification data : ', user_id);
         if (user_id && socket)
