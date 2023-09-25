@@ -163,7 +163,7 @@ function NavBar()
           newSocket.on("sendlist", (notificationlist) => {
             if (notificationlist)
             {
-            settablenotification(notificationlist);
+                settablenotification(notificationlist);
             }
           });
 
@@ -185,11 +185,31 @@ function NavBar()
                   user2Avatar: notificationData.avatar,
                   type: 'ACCEPTED_INVITATION',
                 };
-                setnotificationrequest(true);
-                settablenotification((prevTablenotification) => [
-                  ...prevTablenotification,
-                  transformedData,
-                ]);
+                // if (tablenotification)
+                // {
+                    console.log('TRansform : ', transformedData);
+                    if (tablenotification && tablenotification.length > 0) {
+                        console.log('TRansform : ', transformedData);
+                        setnotificationrequest(true);
+                        settablenotification((prevTablenotification) => [
+                          ...prevTablenotification,
+                          transformedData,
+                        ]);
+                        console.log('table after : ', tablenotification);
+                      } else {
+                        // If tablenotification is empty or undefined, initialize it with transformedData
+                        console.log('tablenotification is empty or undefined.');
+                        setnotificationrequest(true);
+                        settablenotification([transformedData]);
+                      }
+                    console.log('table after : ', tablenotification);
+                    
+                // }
+                // else
+                // {
+                //     settablenotification([transformedData]);
+                // }
+                console.log('table : ', tablenotification);
             }
           });
     

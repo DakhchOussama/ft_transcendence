@@ -31,14 +31,6 @@ function AddUser()
               console.log('Disconnected from WebSocket server');
             });
     
-          newSocket.on('notification', (notificationData) => {
-            // Handle incoming notifications here
-          });
-    
-          newSocket.on('sendlist', (notificationlist) => {
-            // Handle incoming notification list here
-          });
-    
           return () => {
             newSocket.disconnect();
           };

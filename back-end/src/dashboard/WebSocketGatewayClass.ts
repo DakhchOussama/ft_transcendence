@@ -27,31 +27,34 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         console.log('notification table : ', notificationtable);
         if (notificationtable.length)
             client.emit('sendlist', notificationtable);
-        
         client.on('sendNotification', async (notificationData: any) => {
+            console.log('nare');
             const targetClientRoom = `room_${notificationData.user_id}`;
-            const testtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
+            // const gettablenotification = await this.user.getUserNotificationsWithUser2Data(payload.userId);
             try {
-                let check = false;
-                if (testtable.length)
-                {
-                    testtable.map((notif) => {
-                        if (notif.id == notificationData.user_id)
-                            check = true;
-                    })
-                    if (check = false)
-                    {
-                        const notification = await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
-                        const notificationtable = await this.user.findUserByID(payload.userId);
-                        this.server.to(targetClientRoom).emit('notification', notificationtable);
-                    }
-                }
-                else
-                {
-                    const notification = await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
-                        const notificationtable = await this.user.findUserByID(payload.userId);
-                        this.server.to(targetClientRoom).emit('notification', notificationtable);
-                }
+                // let check = false;
+                // // if (gettablenotification.length)
+                // // {
+                //     gettablenotification.map((notif) => {
+                //         if (notif.id == not.userId)
+                //             check = true;
+                //     })
+                //     if (check = false)
+                //     {
+                        await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
+                        
+                        const getnotificationtable = await this.user.findUserByID(payload.userId);
+                        console.log('notification table : ', getnotificationtable);
+                        this.server.to(targetClientRoom).emit('notification', getnotificationtable);
+                    // }
+                // }
+                // else
+                // {
+                //     const notification = await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
+                //     const getnotificationtable = await this.user.findUserByID(payload.userId);
+                //     console.log('notification table : ', getnotificationtable);
+                //     this.server.to(targetClientRoom).emit('notification', getnotificationtable);
+                // }
             } catch (error) {
                 console.error('Error creating notification:', error);
                 // Handle the error as needed
