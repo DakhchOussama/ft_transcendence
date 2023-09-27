@@ -87,6 +87,18 @@ function NavBar()
         setnotificationrequest(false);
     }
 
+    function accept_request(user_id : string)
+    {
+        console.log('User : ', user_id)
+        const notificationData = {
+            user_id: user_id,
+            response: 'accept',
+            token: `Bearer ${JwtToken}`,
+        }
+        if (socket)
+            socket.emit('responserequest', notificationData);
+    }
+
     function handleme()
     {
         setcloseindex(false);
@@ -162,7 +174,8 @@ function NavBar()
     
           newSocket.on("sendlist", (notificationlist) => {
             if (notificationlist)
-            {
+            {user
+                console.log('notification list : ', notificationlist);
                 settablenotification(notificationlist);
             }
           });
@@ -188,14 +201,13 @@ function NavBar()
                 // if (tablenotification)
                 // {
                     console.log('TRansform : ', transformedData);
-                    if (tablenotification && tablenotification.length > 0) {
+                    if (tablenotification && tablenotification.length > 0) { // check this
                         console.log('TRansform : ', transformedData);
                         setnotificationrequest(true);
                         settablenotification((prevTablenotification) => [
                           ...prevTablenotification,
                           transformedData,
                         ]);
-                        console.log('table after : ', tablenotification);
                       } else {
                         // If tablenotification is empty or undefined, initialize it with transformedData
                         console.log('tablenotification is empty or undefined.');
@@ -277,7 +289,7 @@ function NavBar()
                                         <div><p id="notification-nameuser">{request.user2Username}</p><p> send you a friend follow request.</p></div>
                                         </div>
                                         <div className={NavBarCSS.click_icons_friend_request_button}>
-                                            <button onClick={() => socket?.emit('reponserequest', 'accept')}><img src="checkmark.png" alt="Photo"></img></button>
+                                            <button onClick={() => accept_request(request.id)}><img src="checkmark.png" alt="Photo"></img></button>
                                         </div>
                                     </div>)
                                 }

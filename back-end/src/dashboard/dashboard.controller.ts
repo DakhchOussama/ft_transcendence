@@ -1,8 +1,6 @@
 import { Body, Controller, Get, Patch, Req, Res, UseGuards } from '@nestjs/common';
-import { matchDto } from 'src/chat/dto/match.dto';
 import { GameCrudService } from 'src/prisma/game-crud.service';
 import { UserCrudService } from 'src/prisma/user-crud.service';
-import { WebSocketGatewayClass } from './WebSocketGatewayClass';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-aut.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -10,7 +8,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('api')
 export class DashboardController {
-    constructor(private readonly user : UserCrudService, private readonly resultgame : GameCrudService, private readonly websocketDashboard: WebSocketGatewayClass, private readonly authservice: AuthService, private readonly service: PrismaService) {}
+    constructor(private readonly user : UserCrudService, private readonly resultgame : GameCrudService, private readonly authservice: AuthService, private readonly service: PrismaService) {}
     @Get('Dashboard')
     @UseGuards(JwtAuthGuard)
     async HandleProfilepic(@Req() request, @Res() response: any) {
@@ -84,8 +82,16 @@ export class DashboardController {
     
       await Promise.all(
         usersId.map(async (user) => {
-          const userData = await this.user.findUserByID(user.id);
-          users.push(userData);
+          if (user.user1_id === payload.userId)
+          {
+            const userData = await this.user.findUserByID(user.user2_id);
+            users.push(userData);
+          }
+          else if (user.user2_id === payload.userId)
+          {
+              const userData = await this.user.findUserByID(user.user1_id);
+              users.push(userData);
+          }
         })
       );
       return response.status(200).send(users);

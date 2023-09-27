@@ -61,7 +61,7 @@ async  getUserNotificationsWithUser2Data(userId: string) {
     const user2Data = notification.user2;
 
     return {
-      id: notification.id,
+      id: notification.user2.id,
       user2Username: user2Data.username,
       user2Avatar: user2Data.avatar,
       type: notification.type,

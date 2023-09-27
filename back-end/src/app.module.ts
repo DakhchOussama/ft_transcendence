@@ -11,7 +11,7 @@ import { WebSocketGatewayClass } from './dashboard/WebSocketGatewayClass';
   // do not forgot to import prisma module here
   imports: [AuthModule, PrismaModule, ConfigModule.forRoot(), DashboardModule],
   controllers: [],
-  providers: [WebSocketGatewayClass],
+  providers: [],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

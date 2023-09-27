@@ -46,9 +46,13 @@ function AddUser()
             const notificationData = {
                 user_id: user_id,
                 type: 'ACCEPTED_INVITATION',
-                recipient: socket.id,
+                token: `Bearer ${JwtToken}`,
             }
-            socket.emit('sendNotification',notificationData);
+            if (notificationData)
+            {
+                console.log('notification : ', notificationData);
+                socket.emit('sendNotification',notificationData);
+            }
         }
     }
     useEffect(() => {
