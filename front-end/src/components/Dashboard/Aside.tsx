@@ -39,10 +39,10 @@ const Aside: React.FC<AsideProps> = ({onSelectSection}) =>
     {
         setisactivedashboard(!isactivedashboard);
     }
-    // Users.map((user) => {
-    //     if (user.status === 'ONLINE' || user.status === 'IN_GAME')
-    //         totalonlineUsers++;
-    // })
+    Users.map((user) => {
+        if (user.status === 'ONLINE' || user.status === 'IN_GAME')
+            totalonlineUsers++;
+    })
     function handleuparrowadduser()
     {
         setisactiveadduser(!isactiveadduser);

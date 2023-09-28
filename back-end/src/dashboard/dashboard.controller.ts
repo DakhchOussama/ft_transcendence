@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { GameCrudService } from 'src/prisma/game-crud.service';
 import { UserCrudService } from 'src/prisma/user-crud.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-aut.guard';
@@ -158,11 +158,26 @@ export class DashboardController {
   @UseGuards(JwtAuthGuard)
   async sendStatistic(@Req() request, @Res() response: any)
   {
-    // const JwtToken: string = request.headers.authorization.split(' ')[1];
-    // const payload: any = this.authservice.extractPayload(JwtToken);
-    // const user = await this.resultgame.retieveAllGamerecords(payload.userId);
-    // console.log(user);
-    // return response.status(200).send(user);
+    // const authorizationHeader = request.headers.authorization;
+    // if (!authorizationHeader) {
+    //   return response.status(401).send({ error: 'Authorization header is missing' });
+    // }
+    // const tokenParts = authorizationHeader.split(' ');
+    // if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+    //   return response.status(401).send({ error: 'Invalid authorization header format' });
+    // }
+
+    // const JwtToken: string = tokenParts[1];
+
+    // try {
+    //   const payload: any = this.authservice.extractPayload(JwtToken);
+    //   const users: any[] = await this.user.userMatchsRecord(payload.userId);
+    //   return response.status(200).send(users);
+    // } catch (error) {
+    //   // Handle any errors that occur during the process
+    //   console.error('Error:', error);
+    //   return response.status(500).send({ error: 'Internal Server Error' });
+    // }
     const statistic =  [
       {result: '8-4', date: '2023-08-11'},
       {result: '8-0', date: '2023-08-11'},

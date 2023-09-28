@@ -24,7 +24,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         const clientRoom = `room_${payload.userId}`;
         client.join(clientRoom);
         const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
-        console.log('notification : ', notificationtable);
+        // console.log('notification : ', notificationtable);
         if (notificationtable.length)
             client.emit('sendlist', notificationtable);
         // client.on('responserequest', (response: string) => {
@@ -56,19 +56,12 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
     
         const payload: any = this.authservice.extractPayload(JwtToken);
         try {
-          const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
-          if (notificationtable)
-          {
-            notificationtable.map((notif) => {
-              if (notif.id === notificationData.user_id)
-                console.log('Im here');
-            });
-          }
-          
-          await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
-          const getnotificationtable = await this.user.findUserByID(payload.userId);
-          console.log('notification table : ', getnotificationtable);
-          this.server.to(targetClientRoom).emit('notification', getnotificationtable);
+            await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
+            const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
+            console.log('notification after : ', notificationtable);
+            const getnotificationtable = await this.user.findUserByID(payload.userId);
+            // console.log('notification table : ', getnotificationtable);
+            this.server.to(targetClientRoom).emit('notification', getnotificationtable);
         } catch (error) {
           console.error('Error creating notification:', error);
           // Handle the error as needed
@@ -88,10 +81,10 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           // console.log('user_id', payload.userId);
           try
           {
-            console.log('notification : ', notificationData.user_id);
+            // console.log('notification : ', notificationData.user_id);
             const user = await this.user.findUserByID(notificationData.user_id);
             if (user)
-              console.log('user : ', user.username);
+              // console.log('user : ', user.username);
               this.user.createFriendShip(payload.userId, notificationData.user_id);
           }
           catch (error)

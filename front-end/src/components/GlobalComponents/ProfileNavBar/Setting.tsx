@@ -63,30 +63,25 @@ const Setting: React.FC<Settingprops> = ({handleSettingData}) =>
         }
       }, []);
 
-    const handleUpload = async () => {
-        if (selectedFile) {
-          const formData = new FormData();
-          formData.append('file', selectedFile);
+    const handleUpload = async (event : any) => {
+        try
+        {
+            const formData : any = new FormData();
+            formData.append('file', selectedFile);
 
-          try {
-            const response = await fetch('http://localhost:3001/upload/file', {
+            fetch('http://localhost:3001/upload/file', {
               method: 'POST',
+              body : formData,
               headers: {
-                'Authorization' : `Bearer ${JwtToken}`,
-                'Content-Type': 'application/json',
-            },
-              body: formData,
+                'authorization' : `Bearer ${JwtToken}`,
+              }
+            }).then((response) => {
+                console.log(response);
             });
-    
-            if (response.ok) {
-              const data = await response.json();
-              console.log('File uploaded successfully:', data);
-            } else {
-              console.error('File upload failed.');
-            }
-          } catch (error) {
-            console.error('An error occurred during file upload:', error);
-          }
+        }
+        catch (error)
+        {
+            console.log('Error : ', error);
         }
       };
 
@@ -95,21 +90,7 @@ const Setting: React.FC<Settingprops> = ({handleSettingData}) =>
         event.preventDefault();
         settwofactor(true);
     }
-    function handleImage(event: React.ChangeEvent<HTMLInputElement>)
-    {
-        const file = event.target.files?.[0];
-        if (file)
-        {
-            const reader = new FileReader();
-            reader.onloadend = () =>
-            {
-                if (typeof reader.result === 'string')
-                    setImage(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
+    
     function close()
     {
         handleSettingData(true);  
@@ -125,14 +106,14 @@ const Setting: React.FC<Settingprops> = ({handleSettingData}) =>
                     <img src={image} alt="Photo" width="100" height="100" />
                     <div className={SettingCss.choose_img}>
                         <label htmlFor="choose">Change photo profile</label>
-                        <input type="file" onChange={handleFileChange} accept="image/*"  id="choose"></input>
+                        <input type="file" onChange={handleFileChange} accept="image/*" id="choose"  className={SettingCss.choose}></input>
                     </div>
                     <form>
                         <div className={SettingCss.two_factor}>
                             <FontAwesomeIcon icon={faShieldAlt} id={SettingCss.two_factor_icon} />
                             <button onClick={handleTwoFactorClick}>two-factor authentication</button>
                         </div>
-                        <button onClick={handleUpload} id="conform">Confirm</button>
+                        <button onClick={handleUpload} id={SettingCss.conform}>Confirm</button>
                     </form>
                 </div>
             </div>

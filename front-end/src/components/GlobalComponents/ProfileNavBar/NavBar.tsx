@@ -14,12 +14,12 @@ function NavBar()
     const [settingindex, setsettingindex] = useState(false);
     const [closeindex, setcloseindex] = useState(false);
     const [user, setUsers] = useState<any>(null);
-    const [userFriend, setuserFriend] = useState<{ id: number; username: string; avatar: string; status: string }[]>([]);
+    const [userFriend, setuserFriend] = useState<{id: number; username: string; avatar: string; status: string }[]>([]);
     const [updateFriend, setupdateFriend] = useState<{id: number; username: string; avatar: string; status: string }[]>([]);
     const [searchUser, setsearchUser] = useState(false);
     const [searchQuery, setsearchQuery] = useState('');
     const [notificationrequest, setnotificationrequest] = useState(false);
-    const [tablenotification, settablenotification] = useState<{ id: string; user2Username: string; user2Avatar: string; type: string}[]>([]);
+    const [tablenotification, settablenotification] = useState<{id_notif: string, id: string; user2Username: string; user2Avatar: string; type: string}[]>([]);
     const [socket, setsocket] = useState<Socket| null>(null);
     const JwtToken = Cookies.get("access_token");
 
@@ -193,10 +193,11 @@ function NavBar()
                               
                 // Add the transformedData object to the table
                 const transformedData = {
-                  id: notificationData.id,
-                  user2Username: notificationData.username,
-                  user2Avatar: notificationData.avatar,
-                  type: 'ACCEPTED_INVITATION',
+                    id_notif: notificationData.id_notif,
+                    id: notificationData.id,
+                    user2Username: notificationData.username,
+                    user2Avatar: notificationData.avatar,
+                    type: 'ACCEPTED_INVITATION',
                 };
                 // if (tablenotification)
                 // {
@@ -283,7 +284,7 @@ function NavBar()
                         <>
                             {tablenotification.map((request) => {
                                 {if (request.type === 'ACCEPTED_INVITATION') {
-                                    return (<div className={NavBarCSS.click_icons_friend_request} key={request.id}>
+                                    return (<div className={NavBarCSS.click_icons_friend_request} key={request.id_notif}>
                                         <div className={NavBarCSS.click_icons_friend_request_msg}>
                                         <img src={request.user2Avatar} alt="Photo"/>
                                         <div><p id="notification-nameuser">{request.user2Username}</p><p> send you a friend follow request.</p></div>
@@ -296,7 +297,7 @@ function NavBar()
                                 }
                                 {if (request.type === 'game') {
                                     return (
-                                        <div className={NavBarCSS.click_icons_game_request} key={request.id}>
+                                        <div className={NavBarCSS.click_icons_game_request} key={request.id_notif}>
                                         <img src={request.user2Avatar} alt="Photo"/>
                                         <div><p id="notification-nameuser">{request.user2Username}</p><p> send you invitation to play with him</p></div>
                                         </div>

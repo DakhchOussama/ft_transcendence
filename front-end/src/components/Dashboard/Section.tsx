@@ -25,27 +25,18 @@ function Section()
         if (background)
         {   
             const formData = new FormData();
-            const Header = new Headers();
             formData.append('file', background);
-
-            Header.append('Authorization', 'background');
-    
-          try {
-            const response = await fetch('http://localhost:3001/upload/file', {
+              
+            fetch('http://localhost:3001/upload/file', {
               method: 'POST',
-              body: formData,
-              headers: Header
+              body : formData,
+              headers: {
+                'authorization' : `Bearer ${JwtToken}`,
+                'check' : 'background'
+              }
+            }).then((response) => {
+                console.log(response);
             });
-    
-            if (response.ok) {
-              const data = await response.json();
-              console.log('File uploaded successfully:', data);
-            } else {
-              console.error('File upload failed.');
-            }
-          } catch (error) {
-            console.error('An error occurred during file upload:', error);
-          }
         }
     }
 
