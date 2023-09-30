@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShieldAlt } from "@fortawesome/free-solid-svg-icons";
 import Cookies from "js-cookie";
 import DashboardTwoFa from "@/components/2fa/DashboardTwoFa";
+import { showToast } from "@/components/Dashboard/ShowToast";
 
 interface Settingprops {
   handleSettingData: (data: boolean) => void;
@@ -73,9 +74,12 @@ const Setting: React.FC<Settingprops> = ({ handleSettingData }) => {
       }).then((response) => {
         console.log(response);
       });
-    } catch (error) {
-
+    } catch (error : any) {
       console.log("Error : ", error);
+      if (error.response && error.response.status === 415)
+      {
+        showToast('Failed Upload File', "error");
+      }
     }
   };
 

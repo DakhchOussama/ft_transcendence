@@ -83,10 +83,11 @@ export class UploadController
                       'Invalid file type. Only jpg, jpeg, png, gif, bmp, tiff images are allowed.',
                     );
                   this.user.changeUserBackgroundImg(payload.userId, `http://localhost:3001/auth/uploads/${file.filename}`);
-                  response.ok;
                 } catch (error) {
                   // Handle any errors that occur during the process
                   console.error('Error:', error);
+                  // if (typeof response.status === 'number')
+                    // response.status(error.status).json({ message: error.message });
                 }
             }
             }
