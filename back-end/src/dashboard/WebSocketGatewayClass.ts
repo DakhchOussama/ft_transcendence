@@ -16,7 +16,6 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
 
     async handleConnection(client: Socket) {
         const token : any = client.handshake.query.token;
-        console.log(`Client connected: ${client.id}`);
         const tokenParts = token.split(' ');
         const JwtToken: string = tokenParts[1];
 
@@ -24,24 +23,13 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         const clientRoom = `room_${payload.userId}`;
         client.join(clientRoom);
         const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
-        // console.log('notification : ', notificationtable);
         if (notificationtable.length)
             client.emit('sendlist', notificationtable);
-        // client.on('responserequest', (response: string) => {
-        //     console.log('IM here');
-        //     if (response === 'accept')
-        //     {
-        //         // this.user.createFriendShip()
-        //         // add friend
-        //         console.log('accept');
-        //     }
-        // })
         this.clients.set(client.id, client);
     }
     
 
     handleDisconnect(client: Socket) {
-        console.log(`Client disconnected: ${client.id}`);
         this.clients.delete(client.id);
     }
 
@@ -57,14 +45,10 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         const payload: any = this.authservice.extractPayload(JwtToken);
         try {
             await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
-            const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
-            console.log('notification after : ', notificationtable);
             const getnotificationtable = await this.user.findUserByID(payload.userId);
-            // console.log('notification table : ', getnotificationtable);
             this.server.to(targetClientRoom).emit('notification', getnotificationtable);
         } catch (error) {
           console.error('Error creating notification:', error);
-          // Handle the error as needed
         }
       };
 
@@ -83,9 +67,13 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           {
             // console.log('notification : ', notificationData.user_id);
             const user = await this.user.findUserByID(notificationData.user_id);
-            if (user)
-              // console.log('user : ', user.username);
+            let check = await this.user.findFriendship(payload.user_id, notificationData.user_id);
+            let check_another = await this.user.findFriendship(notificationData.user_id, payload.user_id);
+            if (user && check === null && check_another === null)
+            {
               this.user.createFriendShip(payload.userId, notificationData.user_id);
+            }
+              // console.log('user : ', user.username);
           }
           catch (error)
           {

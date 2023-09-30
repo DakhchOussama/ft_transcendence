@@ -82,7 +82,8 @@ export class UploadController
                     throw new UnsupportedMediaTypeException(
                       'Invalid file type. Only jpg, jpeg, png, gif, bmp, tiff images are allowed.',
                     );
-                  // this.user.changeUserAvatar(payload.userId, `http://localhost:3001/auth/uploads/${file.filename}`);
+                  this.user.changeUserBackgroundImg(payload.userId, `http://localhost:3001/auth/uploads/${file.filename}`);
+                  response.ok;
                 } catch (error) {
                   // Handle any errors that occur during the process
                   console.error('Error:', error);

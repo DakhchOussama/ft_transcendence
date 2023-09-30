@@ -24,6 +24,18 @@ export class UserCrudService
       return users;
 }
 
+async changeUserBackgroundImg (user_id: string, newBackImg :string)
+  {
+      return this.prisma.prismaClient.user.update(
+      {
+        where: { id : user_id}, 
+        data : {
+          background: newBackImg,
+        }
+      }
+      )
+}
+
 async findAllUsers(excludedUserid: string)
 {
   const users = await this.prisma.prismaClient.user.findMany (

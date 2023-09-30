@@ -23,7 +23,7 @@ function History()
             .catch((error) => {
                 console.error('Error:', error);
               });
-    }, []);
+    }, [JwtToken]);
     return (
         <>
              <div className="informationaboutuser" >
@@ -34,19 +34,19 @@ function History()
                     <div className="container-user friend" key={compositeKey}>
                     <div className="information-user">
                         <div>
-                        <img src="user.jpg"></img>
+                        <img src="user.jpg" alt="photo"></img>
                             <p>{history.player_1_id}</p>
                         </div>
-                        {score_1 > score_2 && <img src="high-score.png" id="crown-score" width={40} height={40}></img>}
+                        {score_1 > score_2 && <img src="high-score.png" id="crown-score" width={40} height={40} alt="photo"></img>}
                     </div>
                     <div className="score-friend">
                         <p>Score</p>
                         <p><span>{score_1}</span>VS<span>{score_2}</span></p>
                     </div>
                     <div className="information-friend">
-                    {score_1 < score_2 && <img src="high-score.png"id="crown-score-friend" width={40} height={40}></img>}
+                    {score_1 < score_2 && <img src="high-score.png"id="crown-score-friend" width={40} height={40} alt="photo"></img>}
                         <div>
-                            <img src="images.png"></img>
+                            <img src="images.png" alt="photo"></img>
                             <p>{history.player_2_id}</p>
                         </div>
                     </div>

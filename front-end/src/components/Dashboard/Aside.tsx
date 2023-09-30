@@ -34,7 +34,8 @@ const Aside: React.FC<AsideProps> = ({onSelectSection}) =>
             .catch((error) => {
                 console.error('Error:', error);
             });
-    }, []);
+    }, [JwtToken]);
+    
     function handleuparrow()
     {
         setisactivedashboard(!isactivedashboard);
@@ -78,19 +79,19 @@ const Aside: React.FC<AsideProps> = ({onSelectSection}) =>
                 </div>
                {isactivedashboard && (
                 <>
-                <div className="homepage" onClick={() => onSelectSection('home')} >
+                <div className="homepage" onClick={() => onSelectSection("home")} >
                     <img src="../home.png" alt="Photo" width={20} height={20} />
                     <button>Home</button>
                 </div>
-                <div className="homepage" onClick={() => onSelectSection('statistic')}>
+                <div className="homepage" onClick={() => onSelectSection("statistic")}>
                     <img src="../bar-chart.png" alt="Photo" width={20} height={20} />
                     <button>Statistic</button>
                 </div>
-                <div className="homepage" onClick={() => onSelectSection('friends')}>
+                <div className="homepage" onClick={() => onSelectSection("friends")}>
                     <img src="../group.png" alt="Photo" width={20} height={20} />
                     <button>Friends</button>
                 </div>
-                <div className="homepage" onClick={() => onSelectSection('history')}>
+                <div className="homepage" onClick={() => onSelectSection("history")}>
                         <img src="../history.png" alt="Photo" width={20} height={20} />
                         <button>History</button>
                 </div>
@@ -104,7 +105,7 @@ const Aside: React.FC<AsideProps> = ({onSelectSection}) =>
                     <img src="../up-arrow.png" alt="Photo" width={20} height={20} onClick={handleuparrowadduser}/>
                 </div>
                 {isactiveadduser && (
-                        <div className="homepage" onClick={() => onSelectSection('add-user')}>
+                        <div className="homepage" onClick={() => onSelectSection("add-user")}>
                         <img src="../add-user (3).png" alt="Photo" width={20} height={20} />
                         <button>Add Users</button>
                         </div>
@@ -119,7 +120,7 @@ const Aside: React.FC<AsideProps> = ({onSelectSection}) =>
                 {isactiveafriend && (
                     <div className="homepage">
                     <img src="../games (1).png" alt="Photo" width={20} height={20} />
-                    <button>let's Play</button>
+                    <button>Game Play</button>
                     </div>
                 )}
             </div>

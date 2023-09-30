@@ -16,9 +16,9 @@ export class AuthService {
   // signin function
   async signIn(user) {
     if (!user) throw new BadRequestException('Unauthenticated');
-    
+
     const userExists = await this.findUserByEmail(user.email);
-    
+
     if (!userExists) return this.registerUser(user);
     return this.signToken(userExists.id, userExists.email);
   }
@@ -27,12 +27,15 @@ export class AuthService {
   async registerUser(user) {
     try {
       const newUser = await this.service.prismaClient.user.create({
-        data: { ...user, firstauth: true , background: ""},
+        data: { ...user, firstauth: true, background: '' , twoFactorAuthenticationSecret: ''},
       });
-      
+
+      await this.service.prismaClient.stats.create({
+        data: {user_id: newUser.id, wins: 0, losses: 0, ladder_level: 0}
+      })
       return this.signToken(newUser.id, newUser.email);
-    } catch (error){
-      console.log("\nerror\n", error);
+    } catch (error) {
+      console.log('\nerror\n', error);
       throw new InternalServerErrorException();
     }
   }
@@ -53,12 +56,26 @@ export class AuthService {
       userId: userId,
       email: email,
     };
-    try{
+
+    try {
       const token = await this.jwtservice.signAsync(payload);
       return token;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-    } catch(err){
-        console.log(`\n\n\n\n\n\n\n${err}  =============================================\n`)
+
+  async TwoFaToken(email: string) {
+    const payload = {
+      email: email,
+    };
+    
+    try {
+      const token = await this.jwtservice.signAsync(payload);
+      return token;
+    } catch (error) {
+      console.log(error);
     }
   }
 

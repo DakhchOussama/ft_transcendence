@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { Fortytwostrategy } from './strategies/Fortytwo-Oauth.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/Jwt.strategy';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule} from '@nestjs/jwt';
 
 @Module({
   imports: [

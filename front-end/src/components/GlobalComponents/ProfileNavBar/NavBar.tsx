@@ -5,6 +5,7 @@ import Setting from "./Setting";
 import NavBarCSS from './NavBar.module.css';
 import { Socket, io } from "socket.io-client";
 import Cookies from "js-cookie";
+import { showToast } from "@/components/Dashboard/ShowToast";
 
 
 function NavBar()
@@ -22,6 +23,7 @@ function NavBar()
     const [tablenotification, settablenotification] = useState<{id_notif: string, id: string; user2Username: string; user2Avatar: string; type: string}[]>([]);
     const [socket, setsocket] = useState<Socket| null>(null);
     const JwtToken = Cookies.get("access_token");
+    let count = 0;
 
     function handleclickButtom(user_id: number)
     {
@@ -29,10 +31,13 @@ function NavBar()
         {
             const notificationData = {
                 user_id: user_id,
-                type: 'follow',
-                recipient: socket.id,
-            };
-            socket.emit('sendNotification',notificationData);
+                type: 'ACCEPTED_INVITATION',
+                token: `Bearer ${JwtToken}`,
+            }
+            if (notificationData)
+            {
+                socket.emit('sendNotification',notificationData);
+            }
         }
     }
 
@@ -56,7 +61,7 @@ function NavBar()
             console.error('Error:', error);
           });
       }
-    }, [user]);
+    }, [user, JwtToken]);
 
     const handlesearchuser = (e: any) =>
     {
@@ -87,22 +92,45 @@ function NavBar()
         setnotificationrequest(false);
     }
 
-    function accept_request(user_id : string)
+    function accept_request(user_id : string, username: string)
     {
-        console.log('User : ', user_id)
         const notificationData = {
             user_id: user_id,
             response: 'accept',
             token: `Bearer ${JwtToken}`,
         }
         if (socket)
+        {
             socket.emit('responserequest', notificationData);
+            showToast(`add ${username}`, 'add');
+        }
     }
 
     function handleme()
     {
         setcloseindex(false);
         setsettingindex(!settingindex);
+    }
+
+    const handlelogout = async (e : any) =>
+    {
+        try
+        {
+
+            fetch('http://localhost:3001/api/Dashboard/logout', {
+              method: 'POST',
+              headers: {
+                'authorization' : `Bearer ${JwtToken}`,
+              }
+            }).then((response) => {
+                console.log(response);
+            });
+        }
+        catch (error)
+        {
+            console.log('Error : ', error);
+        }
+        Cookies.remove('access_token', { path: '/' });
     }
 
     useEffect(() => {
@@ -122,38 +150,8 @@ function NavBar()
             .catch((error) => {
                 console.error('Error:', error);
             });
-    }, []);
+    }, [JwtToken, userFriend]);
 
-    // useEffect(() => {
-    //     if (!socket)
-    //     {
-    //         const socket = io('http://localhost:3001');
-
-    //         socket.on('connect', () => {
-    //             console.log('Connected to WebSocket server');
-    //             setsocket(socket);
-    //         });
-    //         socket.on('disconnect', () => {
-    //             console.log('Disconnected to WebSocket server');
-    //         });
-    //         socket.on('notification', (notificationData: any) => {
-    //             // if (notificationData === socket.id)
-    //             // {
-    //                 setnotificationrequest(true);
-    //                 settablenotification((prevTablenotification) => [
-    //                     ...prevTablenotification,
-    //                     notificationData,
-    //                   ]);
-    //             // }
-    //         });
-    //         socket.on('sendlist', (notificationlist: any) => {
-    //             settablenotification(notificationlist);
-    //         })
-    //         return () =>{
-    //             socket.disconnect();
-    //         };
-    //     }
-    // }, [socket]);
     useEffect(() => {
         if (!socket) {
           const newSocket = io('http://localhost:3001', {
@@ -164,18 +162,15 @@ function NavBar()
           });
     
           newSocket.on('connect', () => {
-            console.log('Connected to WebSocket server');
             setsocket(newSocket);
           });
     
           newSocket.on('disconnect', () => {
-            console.log('Disconnected from WebSocket server');
           });
     
           newSocket.on("sendlist", (notificationlist) => {
             if (notificationlist)
-            {user
-                console.log('notification list : ', notificationlist);
+            {
                 settablenotification(notificationlist);
             }
           });
@@ -184,14 +179,18 @@ function NavBar()
             if (notificationData)
             {
                 interface NotificationTableItem {
+                    id_notif: number
                     id: number;
                     user2Username: string;
                     user2Avatar: string;
                     type: string;
                 };
                 const table: NotificationTableItem[] = [];
-                              
-                // Add the transformedData object to the table
+
+                if (notificationData && !notificationData.id_notif)
+                {
+                    notificationData.id_notif = count++;
+                }
                 const transformedData = {
                     id_notif: notificationData.id_notif,
                     id: notificationData.id,
@@ -199,30 +198,11 @@ function NavBar()
                     user2Avatar: notificationData.avatar,
                     type: 'ACCEPTED_INVITATION',
                 };
-                // if (tablenotification)
-                // {
-                    console.log('TRansform : ', transformedData);
-                    if (tablenotification && tablenotification.length > 0) { // check this
-                        console.log('TRansform : ', transformedData);
-                        setnotificationrequest(true);
-                        settablenotification((prevTablenotification) => [
-                          ...prevTablenotification,
-                          transformedData,
-                        ]);
-                      } else {
-                        // If tablenotification is empty or undefined, initialize it with transformedData
-                        console.log('tablenotification is empty or undefined.');
-                        setnotificationrequest(true);
-                        settablenotification([transformedData]);
-                      }
-                    console.log('table after : ', tablenotification);
-                    
-                // }
-                // else
-                // {
-                //     settablenotification([transformedData]);
-                // }
-                console.log('table : ', tablenotification);
+                setnotificationrequest(true);
+                settablenotification((prevTablenotification) => [
+                  ...prevTablenotification,
+                  transformedData,
+                ]);
             }
           });
     
@@ -230,7 +210,7 @@ function NavBar()
             newSocket.disconnect();
           };
         }
-      }, []);
+      }, []); // check
 
     useEffect(() => 
     {
@@ -249,7 +229,7 @@ function NavBar()
             <div className={NavBarCSS.nav_search}>
             <div className={NavBarCSS.logo}>
               {/* onclick dahboard */}
-                <img src="../myWhiteLogo.png" alt="Photo" width={114} height={106}/> 
+                <img src="../myWhiteLogo.png" alt="Photo" width={100} height={90}/> 
             </div>
             <div className={NavBarCSS.btn_search}>
             <button type="submit"><svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg></button>
@@ -290,7 +270,7 @@ function NavBar()
                                         <div><p id="notification-nameuser">{request.user2Username}</p><p> send you a friend follow request.</p></div>
                                         </div>
                                         <div className={NavBarCSS.click_icons_friend_request_button}>
-                                            <button onClick={() => accept_request(request.id)}><img src="checkmark.png" alt="Photo"></img></button>
+                                            <button onClick={() => accept_request(request.id, request.user2Username)}><img src="checkmark.png" alt="Photo"></img></button>
                                         </div>
                                     </div>)
                                 }
@@ -327,7 +307,9 @@ function NavBar()
                 </div>
                 <div className={NavBarCSS.choice_second}>
                 <img src="../logout.png" alt="Photo" width={18} height={18} />
-                    <span>Log Out</span>
+                <form>
+                    <button onClick={handlelogout}>Log Out</button>
+                </form>
                 </div>
             </div>
             )}

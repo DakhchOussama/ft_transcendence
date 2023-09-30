@@ -13,23 +13,23 @@ export class DashboardController {
     @UseGuards(JwtAuthGuard)
     async HandleProfilepic(@Req() request, @Res() response: any) {
       const authorizationHeader = request.headers.authorization;
-    if (!authorizationHeader) {
-      return response.status(401).send({ error: 'Authorization header is missing' });
-    }
-    const tokenParts = authorizationHeader.split(' ');
-    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
-      return response.status(401).send({ error: 'Invalid authorization header format' });
-    }
+      if (!authorizationHeader) {
+        return response.status(401).send({ error: 'Authorization header is missing' });
+      }
+      const tokenParts = authorizationHeader.split(' ');
+      if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+        return response.status(401).send({ error: 'Invalid authorization header format' });
+      }
 
-    const JwtToken: string = tokenParts[1];
-  
-    const payload: any = this.authservice.extractPayload(JwtToken);
-    const user = await this.service.prismaClient.user.findUnique({
-      where: {
-        id: payload.userId,
-      },
-    });
-    return response.status(200).send(user);
+      const JwtToken: string = tokenParts[1];
+    
+      const payload: any = this.authservice.extractPayload(JwtToken);
+      const user = await this.service.prismaClient.user.findUnique({
+        where: {
+          id: payload.userId,
+        },
+      });
+      return response.status(200).send(user);
     }
 
   @Get('Dashboard/allUsers')
@@ -158,70 +158,47 @@ export class DashboardController {
   @UseGuards(JwtAuthGuard)
   async sendStatistic(@Req() request, @Res() response: any)
   {
-    // const authorizationHeader = request.headers.authorization;
-    // if (!authorizationHeader) {
-    //   return response.status(401).send({ error: 'Authorization header is missing' });
-    // }
-    // const tokenParts = authorizationHeader.split(' ');
-    // if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
-    //   return response.status(401).send({ error: 'Invalid authorization header format' });
-    // }
+    const authorizationHeader = request.headers.authorization;
+    if (!authorizationHeader) {
+      return response.status(401).send({ error: 'Authorization header is missing' });
+    }
+    const tokenParts = authorizationHeader.split(' ');
+    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+      return response.status(401).send({ error: 'Invalid authorization header format' });
+    }
 
-    // const JwtToken: string = tokenParts[1];
+    const JwtToken: string = tokenParts[1];
 
-    // try {
-    //   const payload: any = this.authservice.extractPayload(JwtToken);
-    //   const users: any[] = await this.user.userMatchsRecord(payload.userId);
-    //   return response.status(200).send(users);
-    // } catch (error) {
-    //   // Handle any errors that occur during the process
-    //   console.error('Error:', error);
-    //   return response.status(500).send({ error: 'Internal Server Error' });
-    // }
-    const statistic =  [
-      {result: '8-4', date: '2023-08-11'},
-      {result: '8-0', date: '2023-08-11'},
-      {result: '8-4', date: '2023-08-11'},
-      {result: '8-0', date: '2023-08-12'},
-      {result: '8-4', date: '2023-08-12'},
-      {result: '8-0', date: '2023-08-12'},
-      {result: '8-4', date: '2023-08-12'},
-      {result: '8-0', date: '2023-08-12'},
-      {result: '7-9', date: '2023-08-13'},
-      {result: '5-7', date: '2023-08-13'},
-      {result: '2-3', date: '2023-08-14'},
-      {result: '2-3', date: '2023-08-14'},
-      {result: '2-3', date: '2023-08-14'},
-      {result: '2-3', date: '2023-08-14'},
-      {result: '2-3', date: '2023-08-14'},
-      {result: '8-4', date: '2023-08-17'},
-      {result: '8-0', date: '2023-08-15'},
-      {result: '8-4', date: '2023-08-19'},
-      {result: '8-0', date: '2023-08-12'},
-      {result: '8-4', date: '2023-08-21'},
-      {result: '8-0', date: '2023-08-13'},
-      {result: '8-4', date: '2023-08-10'},
-      {result: '8-0', date: '2023-08-10'},
-      {result: '7-9', date: '2023-08-13'},
-      {result: '5-7', date: '2023-08-12'},
-      {result: '2-3', date: '2023-08-14'},
-      {result: '2-3', date: '2023-08-546'},
-      {result: '2-3', date: '2023-08-134'},
-      {result: '2-3', date: '2023-08-14'},
-    ]
-    
-    return response.status(200).send(statistic);
+    try {
+      const payload: any = this.authservice.extractPayload(JwtToken);
+      const statistic: any[] = await this.resultgame.retreiveGamesScoreForStatistic(payload.userId);
+      return response.status(200).send(statistic);
+    } catch (error) {
+      // Handle any errors that occur during the process
+      console.error('Error:', error);
+      return response.status(500).send({ error: 'Internal Server Error' });
+    }
   }
 
-  @Patch('Dashboard/setting')
-  setting(@Body() data: any)
+  @Post('Dashboard/logout')
+  @UseGuards(JwtAuthGuard)
+  async Section(@Req() request, @Res() response: any)
   {
-    console.log(`setting : ${data.twofactor}`);
+    if (request)
+    {
+      const authorizationHeader = request.headers.authorization;
+      if (!authorizationHeader) {
+        return response.status(401).send({ error: 'Authorization header is missing' });
+      }
+      const tokenParts = authorizationHeader.split(' ');
+      if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+        return response.status(401).send({ error: 'Invalid authorization header format' });
+      }
+    // 
+      const JwtToken: string = tokenParts[1];
+    // 
+      const payload: any = this.authservice.extractPayload(JwtToken);
+      this.user.changeVisibily(payload.userId, "OFFLINE");
+    }
   }
-
-  // @Patch('Dashboard/Section')
-  // Section(@Body() data: any)
-  // {
-  //   console.log(data);
-  // }
 }

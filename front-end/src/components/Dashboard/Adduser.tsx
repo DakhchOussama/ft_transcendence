@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { Socket, io } from "socket.io-client";
 import Cookies from "js-cookie";
+import { showToast } from "./ShowToast";
 
 function AddUser()
 {
@@ -23,24 +24,21 @@ function AddUser()
             });
       
             newSocket.on('connect', () => {
-              console.log('Connected to WebSocket server');
               setsocket(newSocket);
             });
       
             newSocket.on('disconnect', () => {
-              console.log('Disconnected from WebSocket server');
             });
     
           return () => {
             newSocket.disconnect();
           };
         }
-      }, []);
+      }, [JwtToken]);
     
 
     function handleclickButtom(user_id: string)
     {
-        console.log('NEXT notification data : ', user_id);
         if (user_id && socket)
         {
             const notificationData = {
@@ -50,8 +48,8 @@ function AddUser()
             }
             if (notificationData)
             {
-                console.log('notification : ', notificationData);
                 socket.emit('sendNotification',notificationData);
+                showToast('Send Notification', "success");
             }
         }
     }
@@ -72,7 +70,7 @@ function AddUser()
             .catch((error) => {
                 console.error('Error:', error);
             });
-    }, []);
+    }, [JwtToken]);
 
     useEffect(() => 
     {
@@ -103,14 +101,14 @@ function AddUser()
                     {updateFriend.map((friend) => 
                     (
                         <section className="add-user-list-card" key={friend.id}>
-                            {friend.status === 'IN_GAME' && (
+                            {friend.status === "IN_GAME" && (
                                 <div className="add-user-card ingame" key={friend.id}>
                                 <div className="add-user-card-inde">
                                 <img src={friend.avatar} alt="Photo" />
                                 <p>{friend.username}</p>
                                 </div>
                                 <div>
-                                <img src="ping-pong.png" />
+                                <img src="ping-pong.png" alt="Photo" />
                                 <h2>{friend.status}</h2>
                                 </div>
                                 <div>
@@ -121,7 +119,7 @@ function AddUser()
                                 </div>
                                </div>
                             )}
-                            {friend.status === 'ONLINE' && (
+                            {friend.status === "ONLINE" && (
                                 <div className="add-user-card online" key={friend.id}>
                                 <div className="add-user-card-inde">
                                 <img src={friend.avatar} alt="Photo" />
@@ -139,7 +137,7 @@ function AddUser()
                                 </div>
                             </div>
                             )}
-                            {friend.status === 'OFFLINE' && (
+                            {friend.status === "OFFLINE" && (
                                 <div className="add-user-card offline" key={friend.id}>
                                 <div className="add-user-card-inde">
                                 <img src={friend.avatar} alt="Photo"/>

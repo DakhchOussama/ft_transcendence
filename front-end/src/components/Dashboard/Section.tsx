@@ -35,7 +35,8 @@ function Section()
                 'check' : 'background'
               }
             }).then((response) => {
-                console.log(response);
+                if (response.ok)
+                  console.log('I get it');
             });
         }
     }
@@ -84,7 +85,7 @@ function Section()
                 console.error('add user:', error);
             });
         }
-      }, [user]);
+      }, [user, JwtToken]);
 
       useEffect(() => {
         fetch('http://localhost:3001/api/Dashboard/game', {
@@ -110,7 +111,8 @@ function Section()
           .catch((error) => {
             console.error('Error:', error);
           });
-      }, [gameInformation]);
+      }, [gameInformation, JwtToken]);
+
       useEffect(() => {
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
@@ -145,6 +147,7 @@ function Section()
       }, []);
     if (gameInformation?.wins || gameInformation?.losses)
         total = gameInformation?.wins + gameInformation?.losses;
+    
     return (
         <div className="section-container">
             
@@ -155,7 +158,7 @@ function Section()
                     <input type="file" onChange={handleImage} accept="image/*" id="choose" />
                 </div>
                 </div>
-            <img src={image as string} alt="Photo" />
+            <img src={user?.background || image as string} alt="Photo" />
             </div>
             <div className="identification">
                 <div className="identification-header one">

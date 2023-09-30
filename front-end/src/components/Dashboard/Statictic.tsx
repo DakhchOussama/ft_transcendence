@@ -53,7 +53,7 @@ function Statictic()
         .catch((error) => {
           console.error('Error fetching data:', error);
         })
-    }, []);
+    }, [JwtToken]);
     data = statistic.map((statistic) => {
         const result = statistic.result.split('-');
         const date = statistic.date.split('-');

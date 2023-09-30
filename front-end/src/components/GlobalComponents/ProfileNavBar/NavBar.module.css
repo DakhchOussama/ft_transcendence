@@ -20,18 +20,23 @@
 
 .logo
 {
+    box-sizing: border-box;
     background-color: #24234F;
     width: 19%;
     position: fixed;
     height: 91px;
+    /* padding: 4%; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.nav_search img
+/* .nav_search img
 {
     margin-left: 20%;
     margin-bottom: 4px;
     cursor: pointer;
-}
+} */
 
 .btn_search
 {
@@ -66,6 +71,10 @@
 {
     border-bottom: 1px solid rgba(255, 255, 255, 0.8);
 }
+
+.toastify-container {
+    font-family: Arial, sans-serif;
+  }
 
 .btn_search input
 {
@@ -346,6 +355,7 @@
     padding-left: 5px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.5);
     cursor: pointer;
+    align-items: center;
 }
 
 .choice_first img,
@@ -363,7 +373,7 @@
 }
 
 .choice_first span,
-.choice_second span
+.choice_second form button
 {
     font-weight: 600;
     opacity: 0.9;
@@ -450,11 +460,12 @@
 {
     width: 16px;
     height: 16px;
+    margin-top: 2px;
 }
 
 /**********  Phone Screen   ****************/
 
-@media screen and (max-width: 613px)
+/* @media screen and (max-width: 613px)
 {
     .logo img
     {
@@ -463,7 +474,7 @@
         margin-top: 10px;
         height: 92%;
     }
-}
+} */
 
 @media screen and (max-width: 862px) and (min-width: 400px) {
     .nav_search img
@@ -632,13 +643,13 @@
     {
         right: 155px;
     }
-    .logo img
+    /* .logo img
     {
         margin-left: 6%;
         margin-top: 6px;
         width: 90%;
         height: 95%;
-    }
+    } */
 }
 
 @media screen and  (max-width: 400px) and (max-width: 400px)
@@ -658,12 +669,12 @@
         left: 50px;
     }
 
-    .logo
+    /* .logo
     {
         display: flex;
         align-items: center;
         justify-content: center;
-    }
+    } */
 
     .nav_icon img
     {
@@ -858,10 +869,10 @@
         height: 14px;
         font-size: 9px;
     }
-    .logo
+    /* .logo
     {
         width: 15.4%;
-    }
+    } */
     .btn_search
     {
         margin-left: -10px;
