@@ -129,7 +129,7 @@ export class AuthController {
       }
       response.json({ message: 'Credentials updated successfully' });
     } catch (error) {
-      response.status(error.status).json({ message: error.message });
+      (response).status(error.status).json({ message: error.message });
     }
   }
 

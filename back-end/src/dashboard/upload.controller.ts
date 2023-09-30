@@ -1,4 +1,4 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Header, Req, UseGuards, Res, Body, Param, Get, UnsupportedMediaTypeException } from "@nestjs/common";
+import { Controller, Post, UseInterceptors, UploadedFile, Header, Req, UseGuards, Res, Body, Param, Get, UnsupportedMediaTypeException, HttpException, HttpStatus } from "@nestjs/common";
 import { ExceptionsHandler } from "@nestjs/core/exceptions/exceptions-handler";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { response } from "express";
@@ -52,6 +52,10 @@ export class UploadController
         try {
             const authorizationHeader = request.headers.authorization;
             const check = request.headers.check;
+            if (!file)
+                    throw new UnsupportedMediaTypeException(
+                      'Invalid file type. Only jpg, jpeg, png, gif, bmp, tiff images are allowed.',
+            );
             if (authorizationHeader && !check)
             {
               console.log('Photo profile');
@@ -60,10 +64,6 @@ export class UploadController
             
                 try {
                   const payload: any = this.authservice.extractPayload(JwtToken);
-                  if (!file)
-                    throw new UnsupportedMediaTypeException(
-                      'Invalid file type. Only jpg, jpeg, png, gif, bmp, tiff images are allowed.',
-                    );
                   this.user.changeUserAvatar(payload.userId, `http://localhost:3001/auth/uploads/${file.filename}`);
                 } catch (error) {
                   // Handle any errors that occur during the process
@@ -78,23 +78,16 @@ export class UploadController
             
                 try {
                   const payload: any = this.authservice.extractPayload(JwtToken);
-                  if (!file)
-                    throw new UnsupportedMediaTypeException(
-                      'Invalid file type. Only jpg, jpeg, png, gif, bmp, tiff images are allowed.',
-                    );
                   this.user.changeUserBackgroundImg(payload.userId, `http://localhost:3001/auth/uploads/${file.filename}`);
                 } catch (error) {
-                  // Handle any errors that occur during the process
                   console.error('Error:', error);
-                  // if (typeof response.status === 'number')
-                    // response.status(error.status).json({ message: error.message });
                 }
             }
-            }
+          }
             catch (error) {
             console.error('Error during file upload:', error);
-            throw ('File upload failed');
-        }
+            throw new HttpException('File format is not supported', HttpStatus.BAD_REQUEST);
+          }
     }
 
     
