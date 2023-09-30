@@ -6,6 +6,8 @@ import NavBarCSS from './NavBar.module.css';
 import { Socket, io } from "socket.io-client";
 import Cookies from "js-cookie";
 import { showToast } from "@/components/Dashboard/ShowToast";
+import { toast } from "react-toastify";
+import CustomToast from "@/components/Dashboard/CustomToast";
 
 
 function NavBar()
@@ -116,7 +118,6 @@ function NavBar()
     {
         try
         {
-
             fetch('http://localhost:3001/api/Dashboard/logout', {
               method: 'POST',
               headers: {
@@ -203,6 +204,13 @@ function NavBar()
                   ...prevTablenotification,
                   transformedData,
                 ]);
+                toast(
+                    <CustomToast id={1} onClose={(id) => toast.dismiss(id)} />,
+                    {
+                      position: toast.POSITION.TOP_CENTER,
+                      closeButton: false, // If you want to hide the close button
+                    }
+                  );
             }
           });
     
