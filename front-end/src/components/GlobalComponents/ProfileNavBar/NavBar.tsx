@@ -164,6 +164,7 @@ function NavBar()
     
           newSocket.on('connect', () => {
             setsocket(newSocket);
+            
           });
     
           newSocket.on('disconnect', () => {
@@ -199,18 +200,21 @@ function NavBar()
                     user2Avatar: notificationData.avatar,
                     type: 'ACCEPTED_INVITATION',
                 };
-                setnotificationrequest(true);
-                settablenotification((prevTablenotification) => [
-                  ...prevTablenotification,
-                  transformedData,
-                ]);
-                toast(
-                    <CustomToast id={1} onClose={(id) => toast.dismiss(id)} />,
-                    {
-                      position: toast.POSITION.TOP_CENTER,
-                      closeButton: false, // If you want to hide the close button
-                    }
-                  );
+                if (transformedData)
+                {
+                    setnotificationrequest(true);
+                    settablenotification((prevTablenotification) => [
+                      ...prevTablenotification,
+                      transformedData,
+                    ]);
+                    toast(
+                        <CustomToast id={1} obj={transformedData} onClose={(id) => toast.dismiss(id)} />,
+                        {
+                          position: toast.POSITION.TOP_CENTER,
+                          closeButton: false, // If you want to hide the close button
+                        }
+                      );
+                }
             }
           });
     

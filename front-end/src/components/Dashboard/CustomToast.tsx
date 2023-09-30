@@ -2,13 +2,21 @@
 
 import React from 'react';
 import 'react-toastify/dist/ReactToastify.css';
+import ToastCss from './module/CustomToast.module.css';
 
 interface CustomToastProps {
-  id: number; // Assuming id is a number
+  id: number;
+  obj: {
+    id_notif: any;
+    id: any;
+    user2Username: any;
+    user2Avatar: any;
+    type: string;
+  };
   onClose: (id: number) => void;
 }
 
-const CustomToast: React.FC<CustomToastProps> = ({ id, onClose }) => {
+const CustomToast: React.FC<CustomToastProps> = ({ id, obj, onClose }) => {
   const containerClassName = `max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5 ${
     id ? 'animate-enter' : 'animate-leave'
   }`;
@@ -20,17 +28,25 @@ const CustomToast: React.FC<CustomToastProps> = ({ id, onClose }) => {
           <div className="flex-shrink-0 pt-0.5">
             <img
               className="h-10 w-10 rounded-full"
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=6GHAjsWpt9&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
+              src={obj.user2Avatar}
               alt=""
+              id={ToastCss.img}
             />
           </div>
           <div className="ml-3 flex-1">
             <p className="text-sm font-medium text-gray-900">
-              Emilia Gates
+              {obj.user2Username}
             </p>
-            <p className="mt-1 text-sm text-gray-500">
-              Sure! 8:30pm works great!
-            </p>
+            {obj.type === "ACCEPTED_INVITATION" && (
+                <p className="mt-1 text-sm text-gray-500">
+                send Friend Notification
+                </p>
+            )}
+            {obj.type === "IN_GAME" && (
+                <p className="mt-1 text-sm text-gray-500">
+                send Friend Notification
+                </p>
+            )}
           </div>
         </div>
       </div>
@@ -38,6 +54,7 @@ const CustomToast: React.FC<CustomToastProps> = ({ id, onClose }) => {
         <button
           onClick={() => onClose(id)}
           className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          id={ToastCss.button}
         >
           Close
         </button>
