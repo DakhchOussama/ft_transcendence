@@ -6,6 +6,8 @@ import React from "react";
 
 
 const Structure = ({ children }: { children: React.ReactNode }) => {
+
+  // create socket
   return (
     <main>
       <NavBar />

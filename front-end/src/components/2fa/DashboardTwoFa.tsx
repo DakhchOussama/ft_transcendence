@@ -116,6 +116,7 @@ function DashboardTwoFa(props: any) {
         <div className="flex items-center w-full flex-row-reverse h-[3%]">
           <img
             src="/close.png"
+            alt="photo"
             className="w-[20px] h-[20px] hover:cursor-pointer mt-[-1em] mr-[-0.5em]"
             onClick={(ev) => {
               ev.preventDefault();

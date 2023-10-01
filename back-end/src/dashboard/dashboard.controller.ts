@@ -198,7 +198,11 @@ export class DashboardController {
       const JwtToken: string = tokenParts[1];
     // 
       const payload: any = this.authservice.extractPayload(JwtToken);
-      this.user.changeVisibily(payload.userId, "OFFLINE");
+
+
+
+
+      await this.user.changeVisibily(payload.userId, "OFFLINE");
     }
   }
 }

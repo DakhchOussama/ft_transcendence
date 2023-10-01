@@ -5,7 +5,6 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { Socket, io } from "socket.io-client";
 import Cookies from "js-cookie";
 import { showToast } from "./ShowToast";
-
 function AddUser()
 {
     const [searchQuery, setsearchQuery] = useState('');
@@ -13,7 +12,7 @@ function AddUser()
     const [updateFriend, setupdateFriend] = useState<{id: string; username: string; avatar: string; status: string }[]>([]);
     const [socket, setsocket] = useState<Socket| null>(null);
     const JwtToken = Cookies.get("access_token");
-
+    
     useEffect(() => {
         if (!socket) {
             const newSocket = io('http://localhost:3001', {
@@ -37,7 +36,7 @@ function AddUser()
       }, [JwtToken]);
     
 
-    function handleclickButtom(user_id: string)
+    function handleclickButtom(user_id: string, username: string)
     {
         if (user_id && socket)
         {
@@ -49,7 +48,7 @@ function AddUser()
             if (notificationData)
             {
                 socket.emit('sendNotification',notificationData);
-                showToast('Send Notification', "success");
+                showToast(`Friend Request To ${username}`, "success");
             }
         }
     }
@@ -114,7 +113,7 @@ function AddUser()
                                 <div>
                                     <div>
                                     <FontAwesomeIcon icon={faUserPlus} />
-                                    <button onClick={() => handleclickButtom(friend.id)}>Add USER</button>
+                                    <button onClick={() => handleclickButtom(friend.id, friend.username)}>Add USER</button>
                                     </div>
                                 </div>
                                </div>
@@ -132,7 +131,7 @@ function AddUser()
                                 <div>
                                     <div>
                                     <FontAwesomeIcon icon={faUserPlus} />
-                                    <button onClick={() => handleclickButtom(friend.id)}>ADD USER</button>
+                                    <button onClick={() => handleclickButtom(friend.id, friend.username)}>ADD USER</button>
                                     </div>
                                 </div>
                             </div>
@@ -148,7 +147,7 @@ function AddUser()
                                 <h2>{friend.status}</h2>
                                 </div>
                                 <div>
-                                    <div onClick={() => handleclickButtom(friend.id)}>
+                                    <div onClick={() => handleclickButtom(friend.id, friend.username)}>
                                     <FontAwesomeIcon icon={faUserPlus} />
                                     <button>ADD USER</button>
                                     </div>

@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function Dashboard() {
   return (
     <Structure>
-      <ToastContainer  position="top-center" reverseOrder={false}></ToastContainer>
+      <ToastContainer  position="top-center"></ToastContainer>
       <DisplayComponent></DisplayComponent>
     </Structure>
   );

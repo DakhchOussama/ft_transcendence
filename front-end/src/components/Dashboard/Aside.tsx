@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 interface AsideProps 
 {
@@ -15,6 +16,7 @@ const Aside: React.FC<AsideProps> = ({onSelectSection}) =>
     const [isactiveachat, setisactivechat] = useState(true);
     const [Users, setUsers] = useState<{ id: number; username: string; status: string }[]>([]);
     const JwtToken = Cookies.get("access_token");
+    const router = useRouter();
 
     totalonlineUsers = 0;
     useEffect(() => {
@@ -120,7 +122,7 @@ const Aside: React.FC<AsideProps> = ({onSelectSection}) =>
                 {isactiveafriend && (
                     <div className="homepage">
                     <img src="../games (1).png" alt="Photo" width={20} height={20} />
-                    <button>Game Play</button>
+                    <button onClick={(event: any) => {router.push("/game");}}>Game Play</button>
                     </div>
                 )}
             </div>

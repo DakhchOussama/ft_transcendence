@@ -80,12 +80,12 @@ export class UploadController
                   const payload: any = this.authservice.extractPayload(JwtToken);
                   this.user.changeUserBackgroundImg(payload.userId, `http://localhost:3001/auth/uploads/${file.filename}`);
                 } catch (error) {
-                  console.error('Error:', error);
+                  // console.error('Error:', error);
                 }
             }
           }
             catch (error) {
-            console.error('Error during file upload:', error);
+            // console.error('Error during file upload:', error);
             throw new HttpException('File format is not supported', HttpStatus.BAD_REQUEST);
           }
     }

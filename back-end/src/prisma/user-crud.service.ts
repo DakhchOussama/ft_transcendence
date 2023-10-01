@@ -248,7 +248,7 @@ async deleteUserAccount (user_id:string)
 
 async changeVisibily (user_id : string,  status:  'IN_GAME' | 'ONLINE' | 'OFFLINE')
 {
-  this.prisma.prismaClient.user.update ({
+  await this.prisma.prismaClient.user.update ({
     where:
     {
       id : user_id,

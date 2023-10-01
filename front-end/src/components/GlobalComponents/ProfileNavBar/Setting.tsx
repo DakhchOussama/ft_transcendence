@@ -72,8 +72,11 @@ const Setting: React.FC<Settingprops> = ({ handleSettingData }) => {
           authorization: `Bearer ${JwtToken}`,
         },
       }).then((response) => {
-        if(response.status === 400)
+        if(response.status === 400){
           showToast('Failed Upload File', "error");
+          console.clear();
+          
+        }
       });
     } catch (error : any) {
       console.clear();
