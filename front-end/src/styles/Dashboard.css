@@ -130,6 +130,7 @@ aside
     background-color: #24234F;
     height: 100%;
     position: fixed;
+    top: 91px;
     width: 19%;
     border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
@@ -862,7 +863,6 @@ aside
     /* height: 100vh; */
     height: 80%;
     top: 14%;
-    z-index: -1;
 }
 
 .userheader
