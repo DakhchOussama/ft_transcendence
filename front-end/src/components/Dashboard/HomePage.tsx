@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {FaSearch} from 'react-icons/fa';
 import Cookies from "js-cookie";
+import { io } from "socket.io-client";
 
 function HomePage()
 {
@@ -55,6 +56,42 @@ function HomePage()
                 console.error('Error:', error);
             });
     }, [JwtToken]);
+
+      useEffect(() => {
+    
+        const newSocket = io('http://localhost:3001', {
+          transports: ['websocket']
+        });
+        
+        newSocket.on('online', (userObj) => {
+            console.log('Im here');
+            if (userObj)
+            {
+                updateFriend.map((user) => {
+                    if (user.id === userObj)
+                    {
+                        user.status === 'ONLINE';
+                    }
+                })
+            }
+        });
+        newSocket.on('offline', (userObj) => {
+            console.log('Im here');
+            if (userObj)
+            {
+                updateFriend.map((user) => {
+                    if (user.id === userObj)
+                    {
+                        user.status === 'OFFLINE';
+                    }
+                })
+            }
+        });
+      return () => {
+        newSocket.disconnect();
+      };
+  }, [JwtToken]);
+    
     return (
         <>
         <div className="home-page-counting">

@@ -16,10 +16,11 @@ function Dashboard() {
         const newSocket = io('http://localhost:3001', {
           transports: ['websocket']
         });
-        const notificationData = {
-          token: `Bearer ${JwtToken}`,
+        const statusData = {
+            token: `Bearer ${JwtToken}`,
+            status: 'online'
         }
-        newSocket.emit('online', notificationData);
+        newSocket.emit('status', statusData);
       return () => {
         newSocket.disconnect();
       };

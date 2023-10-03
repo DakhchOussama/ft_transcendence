@@ -16,7 +16,9 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
 
     async handleConnection(client: Socket) {
         const token : any = client.handshake.query.token;
-        const tokenParts = token.split(' ');
+        if (token)
+        {
+          const tokenParts = token.split(' ');
         const JwtToken: string = tokenParts[1];
 
         const payload: any = this.authservice.extractPayload(JwtToken);
@@ -26,6 +28,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         if (notificationtable.length)
             client.emit('sendlist', notificationtable);
         this.clients.set(client.id, client);
+        }
     }
     
 
@@ -82,17 +85,45 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           }
         }
       }
-      @SubscribeMessage('online')
+      @SubscribeMessage('status')
       async handleonline(@MessageBody() notificationData: any)
       {
         const token: any = notificationData.token;
-        if (typeof token === 'string')
+        console.log('notificationData : ', notificationData);
+        if (token)
         {
           const tokenParts = token.split(' ');
           const JwtToken: string = tokenParts[1];
-    
           const payload: any = this.authservice.extractPayload(JwtToken);
+          const usersId: any [] = await this.user.findFriendsList(payload.userId);
+          const users: any[] = [];
+    
+      await Promise.all(
+        usersId.map(async (user) => {
+          if (user.user1_id === payload.userId)
+          {
+            const userData = await this.user.findUserByID(user.user2_id);
+            users.push(userData);
+          }
+          else if (user.user2_id === payload.userId)
+          {
+              const userData = await this.user.findUserByID(user.user1_id);
+              users.push(userData);
+          }
+        })
+      );
+          console.log('users : ', users);
+          if (users)
+          {
+            users.map((user) => {
+              const targetClientRoom = `room_${user.id}`;
+              console.log('target : ', targetClientRoom);
+              if (notificationData.status === 'online')
+                this.server.to(targetClientRoom).emit('online', payload.userId);
+              else if (notificationData.status === 'offline')
+                this.server.to(targetClientRoom).emit('offline', payload.userId);
+            })
+          }
         }
       }
-    
 }
