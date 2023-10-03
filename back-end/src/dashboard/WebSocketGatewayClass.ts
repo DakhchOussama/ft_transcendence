@@ -82,5 +82,17 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           }
         }
       }
+      @SubscribeMessage('online')
+      async handleonline(@MessageBody() notificationData: any)
+      {
+        const token: any = notificationData.token;
+        if (typeof token === 'string')
+        {
+          const tokenParts = token.split(' ');
+          const JwtToken: string = tokenParts[1];
+    
+          const payload: any = this.authservice.extractPayload(JwtToken);
+        }
+      }
     
 }
