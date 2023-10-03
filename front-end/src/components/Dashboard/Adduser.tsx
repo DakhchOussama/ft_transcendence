@@ -11,6 +11,7 @@ function AddUser()
     const [userFriend, setuserFriend] = useState<{ id: string; username: string; avatar: string; status: string }[]>([]);
     const [updateFriend, setupdateFriend] = useState<{id: string; username: string; avatar: string; status: string }[]>([]);
     const [socket, setsocket] = useState<Socket| null>(null);
+    const [clickedUsers, setClickedUsers] = useState<string[]>([]);
     const JwtToken = Cookies.get("access_token");
     
     useEffect(() => {
@@ -42,13 +43,14 @@ function AddUser()
         {
             const notificationData = {
                 user_id: user_id,
-                type: 'ACCEPTED_INVITATION',
+                type: 'FRIENDSHIP_REQUEST',
                 token: `Bearer ${JwtToken}`,
             }
             if (notificationData)
             {
                 socket.emit('sendNotification',notificationData);
                 showToast(`Friend Request To ${username}`, "success");
+                setClickedUsers(prevClickedUsers => [...prevClickedUsers, user_id]);
             }
         }
     }
@@ -100,60 +102,27 @@ function AddUser()
                     {updateFriend.map((friend) => 
                     (
                         <section className="add-user-list-card" key={friend.id}>
-                            {friend.status === "IN_GAME" && (
                                 <div className="add-user-card ingame" key={friend.id}>
                                 <div className="add-user-card-inde">
                                 <img src={friend.avatar} alt="Photo" />
                                 <p>{friend.username}</p>
                                 </div>
                                 <div>
-                                <img src="ping-pong.png" alt="Photo" />
-                                <h2>{friend.status}</h2>
                                 </div>
                                 <div>
+                                {clickedUsers.includes(friend.id) ? (
+                                    <div id="btn-pedding" style={{ cursor: 'none', backgroundColor: '#BFBEBD' }}>
+                                    <FontAwesomeIcon icon={faUserPlus} />
+                                    <button>Pending</button>
+                                    </div>
+                                    ) : (
                                     <div>
                                     <FontAwesomeIcon icon={faUserPlus} />
-                                    <button onClick={() => handleclickButtom(friend.id, friend.username)}>Add USER</button>
+                                    <button onClick={() => handleclickButtom(friend.id, friend.username)}>Add User</button>
                                     </div>
+                                )}
                                 </div>
                                </div>
-                            )}
-                            {friend.status === "ONLINE" && (
-                                <div className="add-user-card online" key={friend.id}>
-                                <div className="add-user-card-inde">
-                                <img src={friend.avatar} alt="Photo" />
-                                <p>{friend.username}</p>
-                                </div>
-                                <div>
-                                <img src="../new-moon.png" alt="Photo"/>
-                                <h2>{friend.status}</h2>
-                                </div>
-                                <div>
-                                    <div>
-                                    <FontAwesomeIcon icon={faUserPlus} />
-                                    <button onClick={() => handleclickButtom(friend.id, friend.username)}>ADD USER</button>
-                                    </div>
-                                </div>
-                            </div>
-                            )}
-                            {friend.status === "OFFLINE" && (
-                                <div className="add-user-card offline" key={friend.id}>
-                                <div className="add-user-card-inde">
-                                <img src={friend.avatar} alt="Photo"/>
-                                <p>{friend.username}</p>
-                                </div>
-                                <div>
-                                <img src="../yellowcircle.png" alt="Photo" width="10" height="10" />
-                                <h2>{friend.status}</h2>
-                                </div>
-                                <div>
-                                    <div onClick={() => handleclickButtom(friend.id, friend.username)}>
-                                    <FontAwesomeIcon icon={faUserPlus} />
-                                    <button>ADD USER</button>
-                                    </div>
-                                </div>
-                            </div>
-                            )}
                         </section>
                     ))}
                 </div>

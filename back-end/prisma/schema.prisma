@@ -175,7 +175,7 @@ model DirectMessaging {
 
 enum NotificationType {
   ACCEPTED_INVITATION
-  GAME_INVITATION
+  FRIENDSHIP_REQUEST
 }
 
 model Notification {

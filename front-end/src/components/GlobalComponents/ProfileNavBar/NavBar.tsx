@@ -289,15 +289,6 @@ function NavBar()
                                     </div>)
                                 }
                                 }
-                                {if (request.type === 'game') {
-                                    return (
-                                        <div className={NavBarCSS.click_icons_game_request} key={request.id_notif}>
-                                        <img src={request.user2Avatar} alt="Photo"/>
-                                        <div><p id="notification-nameuser">{request.user2Username}</p><p> send you invitation to play with him</p></div>
-                                        </div>
-                                    )
-                                }
-                                }
                             })}
                         </>
                     </div>

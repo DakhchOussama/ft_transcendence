@@ -49,7 +49,7 @@ export class DashboardController {
 
     try {
       const payload: any = this.authservice.extractPayload(JwtToken);
-      const users: any[] = await this.user.findAllUsersdata(payload.userId);
+      const users: any[] = await this.user.findNonFriendsUsers(payload.userId);
       return response.status(200).send(users);
     } catch (error) {
       // Handle any errors that occur during the process

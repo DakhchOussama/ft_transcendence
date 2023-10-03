@@ -44,7 +44,8 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
     
         const payload: any = this.authservice.extractPayload(JwtToken);
         try {
-            await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
+            const table  = await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
+            console.log('Table : ', table);
             const getnotificationtable = await this.user.findUserByID(payload.userId);
             this.server.to(targetClientRoom).emit('notification', getnotificationtable);
         } catch (error) {
