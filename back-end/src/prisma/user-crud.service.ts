@@ -102,7 +102,7 @@ async findAllUsers(excludedUserid: string)
 }
 
 async createNotification(user1_id :string, user2_id :string, notificationType:NotificationType) {
-  await this.prisma.prismaClient.notification.create({
+   await this.prisma.prismaClient.notification.create({
     data: {
       user1_id: user1_id ,
       user2_id: user2_id ,
@@ -120,7 +120,6 @@ async  getUserNotificationsWithUser2Data(userId: string) {
       user2: true, // Include user2 data
     },
   });
-
   const notificationsWithUser2Data = notifications.map((notification) => {
     const user2Data = notification.user2;
 
@@ -169,26 +168,37 @@ async findUserByUsername(username: string)
 // Retrieve user's friends list and their statuses.
 async findFriendsList(id: string)
 {
-  return this.prisma.prismaClient.friendships.findMany (
+  const friendShips =  await this.prisma.prismaClient.friendships.findMany (
     {
       where : {
         OR : [
           {user1_id: id},
           {user2_id : id},
         ]
+      },
+      select :{
+        user1_id: true, 
+        user2_id : true, 
       }
+
     }
   )
+  const friends_ids = friendShips.filter ((frienship) =>{
+    return id === frienship.user1_id ? frienship.user2_id : frienship.user1_id;
+  })
+  return friends_ids
 }
 
-async findFriendship(user1_id: string, user2_id: string)
+async findFriendship(current_user_id: string, targeted_user_id: string)
 {
-  const friendship = await this.prisma.prismaClient.friendships.findUnique (
+  const friendship = await this.prisma.prismaClient.friendships.findFirst (
     {
       where : {
-          user1_id: user1_id,
-          user2_id : user2_id
-      },
+        OR: [
+          { user1_id: current_user_id, user2_id: targeted_user_id },
+          { user1_id: targeted_user_id, user2_id: current_user_id },
+        ],
+        },
       select :
       {
         id :true

@@ -65,40 +65,7 @@ export class DashboardController {
       return response.status(500).send({ error: 'Internal Server Error' });
     }
   }
-
-  // @Get('Dashboard/allUsers/filter')
-  // @UseGuards(JwtAuthGuard)
-  // async sendFriendshiprequest(@Req() request, @Res() response: any)
-  // {
-  //   const authorizationHeader = request.headers.authorization;
-  //   if (!authorizationHeader) {
-  //     return response.status(401).send({ error: 'Authorization header is missing' });
-  //   }
-  //   const tokenParts = authorizationHeader.split(' ');
-  //   if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
-  //     return response.status(401).send({ error: 'Invalid authorization header format' });
-  //   }
-
-  //   const JwtToken: string = tokenParts[1];
-
-  //   try {
-  //     const payload: any = this.authservice.extractPayload(JwtToken);
-  //     const users: any[] = await this.user.findNonFriendsUsers(payload.userId);
-  //     const newusers = await Promise.all(
-  //       users.map(async (user) => {
-  //         if (await this.user.FriendShipRequestAlreadySent(payload.userId, user.id))
-  //           return user;
-  //       })
-  //     );
-  //     console.log('new users : ', newusers);
-  //     return response.status(200).send(newusers);
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     return response.status(500).send({ error: 'Internal Server Error' });
-  //   }
-  // }
   
-
   @Get('Dashboard/friends')
   @UseGuards(JwtAuthGuard)
   async sendUser(@Req() request, @Res() response: any)
@@ -117,6 +84,7 @@ export class DashboardController {
     try {
       const payload: any = this.authservice.extractPayload(JwtToken);
       const usersId: any[] = await this.user.findFriendsList(payload.userId);
+      // console.log("users ID : ", usersId);
       const users: any[] = [];
     
       await Promise.all(
@@ -186,13 +154,6 @@ export class DashboardController {
     return response.status(200).send(user);
   }
 
-  // @Post('Dashboard/addfriend')
-  // addfriends(@Body() data: any)
-  // {
-  //     console.log('Receive data', data);
-  //     return data;
-  // }
-
   @Get('Dashboard/statistic')
   @UseGuards(JwtAuthGuard)
   async sendStatistic(@Req() request, @Res() response: any)
@@ -237,9 +198,6 @@ export class DashboardController {
       const JwtToken: string = tokenParts[1];
     // 
       const payload: any = this.authservice.extractPayload(JwtToken);
-
-
-
 
       await this.user.changeVisibily(payload.userId, "OFFLINE");
     }

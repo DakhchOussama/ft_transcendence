@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {FaSearch} from 'react-icons/fa';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus, faClock } from '@fortawesome/free-solid-svg-icons';
 import { Socket, io } from "socket.io-client";
 import Cookies from "js-cookie";
 import { showToast } from "./ShowToast";
@@ -9,7 +9,6 @@ function AddUser()
 {
     const [searchQuery, setsearchQuery] = useState('');
     const [userFriend, setuserFriend] = useState<{ id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
-    const [newuserFriend, setnewuserFriend] = useState<{ id: string; username: string; avatar: string; status: string }[]>([]);
     const [updateFriend, setupdateFriend] = useState<{id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
     const [socket, setsocket] = useState<Socket| null>(null);
     const [clickedUsers, setClickedUsers] = useState<string[]>([]);
@@ -104,20 +103,6 @@ function AddUser()
             );
             setupdateFriend(filterFriends);
         }
-        // if (newuserFriend) 
-        // {
-        //     console.log('Im here');
-        //     const updatedFriends = updateFriend.map((friend) => {
-        //         const newUser = newuserFriend.find((user) => user.id === friend.id);
-        //         if (newUser) {
-        //             console.log('new user : ', newUser);
-        //             friend.pending = true; // Set the 'pending' property to true
-        //         }
-        //         return friend;
-        //     });
-        //     setupdateFriend(updatedFriends); // Update updateFriend with the new array
-        //     console.log('update : ', updateFriend);
-        // }
     }, [searchQuery, userFriend]);
     return (
         <div className="usercomponent">
@@ -145,9 +130,9 @@ function AddUser()
                                 </div>
                                 <div>
                                 {clickedUsers.includes(friend.id) || friend.pending === true ? (
-                                    <div id="btn-pedding" style={{ cursor: 'none', backgroundColor: '#BFBEBD' }}>
-                                    <FontAwesomeIcon icon={faUserPlus} />
-                                    <button>Pending</button>
+                                    <div id="btn-pedding" style={{ cursor: 'auto', backgroundColor: '#BFBEBD' }}>
+                                    <FontAwesomeIcon icon={faClock} style={{ cursor: 'auto', backgroundColor: '#BFBEBD' }} />
+                                    <button style={{ cursor: 'auto', backgroundColor: '#BFBEBD' }}>Pending</button>
                                     </div>
                                     ) : (
                                     <div>

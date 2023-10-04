@@ -38,24 +38,24 @@ function HomePage()
         }
     }, [searchQuery, selectValue, userFriend]);
     
-    useEffect(() => {
-        fetch('http://localhost:3001/api/Dashboard/friends', {
-            method: 'Get',
-            headers: {
-              'Authorization' : `Bearer ${JwtToken}`,
-              'Content-Type': 'application/json',
-            }
-          })
-            .then((response) => {
-                if (!response.ok)
-                    throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then((data) => setuserFriend(data))
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }, [JwtToken]);
+    // useEffect(() => {
+    //     fetch('http://localhost:3001/api/Dashboard/friends', {
+    //         method: 'Get',
+    //         headers: {
+    //           'Authorization' : `Bearer ${JwtToken}`,
+    //           'Content-Type': 'application/json',
+    //         }
+    //       })
+    //         .then((response) => {
+    //             if (!response.ok)
+    //                 throw new Error('Network response was not ok');
+    //             return response.json();
+    //         })
+    //         .then((data) => setuserFriend(data))
+    //         .catch((error) => {
+    //             console.error('Error:', error);
+    //         });
+    // }, [JwtToken]);
 
       useEffect(() => {
     
@@ -87,6 +87,11 @@ function HomePage()
                 })
             }
         });
+        newSocket.on('friend', (friends) => {
+            console.log('friends :', friends);
+            if (friends)
+                setuserFriend(friends);
+        })
       return () => {
         newSocket.disconnect();
       };
