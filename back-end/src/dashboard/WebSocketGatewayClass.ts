@@ -29,23 +29,19 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         if (notificationtable.length)
             client.emit('sendlist', notificationtable);
         const usersId: any[] = await this.user.findFriendsList(payload.userId);
-        const users: any[] = [];
-        await Promise.all(
-        usersId.map(async (user) => {
-        if (user.user1_id === payload.userId)
+        if (usersId)
         {
-          const userData = await this.user.findUserByID(user.user2_id);
-          users.push(userData);
+          const users: any[] = [];
+          await Promise.all(
+          usersId.map(async (user) => {
+            const userData = await this.user.findUserByID(user);
+            users.push(userData);
+          })
+          );
+          console.log(`users id of ${payload.userId} : `, users);
+          if (users)
+            this.server.emit('friend', users);
         }
-        else if (user.user2_id === payload.userId)
-        {
-          const userData = await this.user.findUserByID(user.user1_id);
-          users.push(userData);
-        }
-        })
-        );
-        console.log(`users id of ${payload.userId} : `, users);
-        this.server.emit('friend', users);
         this.clients.set(client.id, client);
         }
     }
@@ -93,42 +89,24 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
             {
               await this.user.createFriendShip(payload.userId, notificationData.user_id);
               const usersId: any[] = await this.user.findFriendsList(payload.userId);
-              console.log('users : ', usersId);
               const users: any[] = [];
-    
               await Promise.all(
               usersId.map(async (user) => {
-              if (user.user1_id === payload.userId)
-              {
-                const userData = await this.user.findUserByID(user.user2_id);
+                const userData = await this.user.findUserByID(user);
                 users.push(userData);
-              }
-              else if (user.user2_id === payload.userId)
-              {
-                const userData = await this.user.findUserByID(user.user1_id);
-                users.push(userData);
-              }
               })
               );
-              this.server.emit('friend', users);
+              const MyClientRoom = `room_${payload.user_id}`;
+              this.server.to(MyClientRoom).emit('friend', users);
 
               // send to other user
               const usersId_other: any[] = await this.user.findFriendsList(notificationData.user_id);
-              console.log('users : ', usersId);
               const users_other: any[] = [];
     
               await Promise.all(
                 usersId_other.map(async (user) => {
-              if (user.user1_id === notificationData.user_id)
-              {
-                const userData = await this.user.findUserByID(user.user2_id);
+                const userData = await this.user.findUserByID(user);
                 users_other.push(userData);
-              }
-              else if (user.user2_id === notificationData.user_id)
-              {
-                const userData = await this.user.findUserByID(user.user1_id);
-                users_other.push(userData);
-              }
               })
               );
               const targetClientRoom = `room_${notificationData.user_id}`;
