@@ -166,28 +166,28 @@ async findUserByUsername(username: string)
 }
 
 // Retrieve user's friends list and their statuses.
-async findFriendsList(id: string)
-{
-  const friendShips =  await this.prisma.prismaClient.friendships.findMany (
-    {
-      where : {
-        OR : [
-          {user1_id: id},
-          {user2_id : id},
-        ]
-      },
-      select :{
-        user1_id: true, 
-        user2_id : true, 
-      }
+async findFriendsList(id: string) {
+  const friendShips = await this.prisma.prismaClient.friendships.findMany({
+    where: {
+      OR: [
+        { user1_id: id },
+        { user2_id: id },
+      ],
+    },
+    select: {
+      user1_id: true,
+      user2_id: true,
+    },
+  });
 
-    }
-  )
-  const friends_ids = friendShips.filter ((frienship) =>{
-    return id === frienship.user1_id ? frienship.user2_id : frienship.user1_id;
-  })
-  return friends_ids
+  const friends_ids = friendShips.map((friendship) => {
+    // Determine the friend's ID based on the current user's ID
+    return id === friendship.user1_id ? friendship.user2_id : friendship.user1_id;
+  });
+
+  return friends_ids;
 }
+
 
 async findFriendship(current_user_id: string, targeted_user_id: string)
 {
