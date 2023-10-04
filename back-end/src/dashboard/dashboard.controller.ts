@@ -50,7 +50,15 @@ export class DashboardController {
     try {
       const payload: any = this.authservice.extractPayload(JwtToken);
       const users: any[] = await this.user.findNonFriendsUsers(payload.userId);
-      return response.status(200).send(users);
+      const newusers = await Promise.all(
+        users.map(async (user) => {
+          const isFriendRequestSent = await this.user.FriendShipRequestAlreadySent(payload.userId, user.id);
+          if (isFriendRequestSent)
+            user.pending = true;
+          return user;
+        })
+      );
+      return response.status(200).send(newusers);
     } catch (error) {
       // Handle any errors that occur during the process
       console.error('Error:', error);
@@ -58,40 +66,37 @@ export class DashboardController {
     }
   }
 
-  @Get('Dashboard/allUsers/filter')
-  @UseGuards(JwtAuthGuard)
-  async sendFriendshiprequest(@Req() request, @Res() response: any)
-  {
-    const authorizationHeader = request.headers.authorization;
-    if (!authorizationHeader) {
-      return response.status(401).send({ error: 'Authorization header is missing' });
-    }
-    const tokenParts = authorizationHeader.split(' ');
-    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
-      return response.status(401).send({ error: 'Invalid authorization header format' });
-    }
+  // @Get('Dashboard/allUsers/filter')
+  // @UseGuards(JwtAuthGuard)
+  // async sendFriendshiprequest(@Req() request, @Res() response: any)
+  // {
+  //   const authorizationHeader = request.headers.authorization;
+  //   if (!authorizationHeader) {
+  //     return response.status(401).send({ error: 'Authorization header is missing' });
+  //   }
+  //   const tokenParts = authorizationHeader.split(' ');
+  //   if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+  //     return response.status(401).send({ error: 'Invalid authorization header format' });
+  //   }
 
-    const JwtToken: string = tokenParts[1];
+  //   const JwtToken: string = tokenParts[1];
 
-    try {
-      const payload: any = this.authservice.extractPayload(JwtToken);
-      const users: any[] = await this.user.findNonFriendsUsers(payload.userId);
-
-// Use filter to get a new array of users that meet the condition
-const newusers: any[] = await Promise.all(
-  users.filter(async (user) => {
-    if (!await this.user.FriendShipRequestAlreadySent(payload.userId, user.id))
-      return (user);
-  })
-);
-console.log('new Users : ', newusers);
-  return response.status(200).send(newusers);
-    } catch (error) {
-      // Handle any errors that occur during the process
-      console.error('Error:', error);
-      return response.status(500).send({ error: 'Internal Server Error' });
-    }
-  }
+  //   try {
+  //     const payload: any = this.authservice.extractPayload(JwtToken);
+  //     const users: any[] = await this.user.findNonFriendsUsers(payload.userId);
+  //     const newusers = await Promise.all(
+  //       users.map(async (user) => {
+  //         if (await this.user.FriendShipRequestAlreadySent(payload.userId, user.id))
+  //           return user;
+  //       })
+  //     );
+  //     console.log('new users : ', newusers);
+  //     return response.status(200).send(newusers);
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     return response.status(500).send({ error: 'Internal Server Error' });
+  //   }
+  // }
   
 
   @Get('Dashboard/friends')

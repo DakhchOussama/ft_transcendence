@@ -25,6 +25,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         const clientRoom = `room_${payload.userId}`;
         client.join(clientRoom);
         const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
+        console.log('notification table : ', notificationtable);
         if (notificationtable.length)
             client.emit('sendlist', notificationtable);
         this.clients.set(client.id, client);
@@ -47,8 +48,9 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
     
         const payload: any = this.authservice.extractPayload(JwtToken);
         try {
-            const table  = await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
-            console.log('Table : ', table);
+            await this.user.createNotification(notificationData.user_id, payload.userId, notificationData.type);
+            const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
+            console.log('Table : ', notificationtable);
             const getnotificationtable = await this.user.findUserByID(payload.userId);
             this.server.to(targetClientRoom).emit('notification', getnotificationtable);
         } catch (error) {
@@ -69,15 +71,13 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           // console.log('user_id', payload.userId);
           try
           {
-            // console.log('notification : ', notificationData.user_id);
-            const user = await this.user.findUserByID(notificationData.user_id);
             let check = await this.user.findFriendship(payload.user_id, notificationData.user_id);
-            let check_another = await this.user.findFriendship(notificationData.user_id, payload.user_id);
-            if (user && check === null && check_another === null)
+            // let check_another = await this.user.findFriendship(notificationData.user_id, payload.user_id);
+            if (check === null)
             {
               this.user.createFriendShip(payload.userId, notificationData.user_id);
+              console.log('Im here');
             }
-              // console.log('user : ', user.username);
           }
           catch (error)
           {
@@ -89,7 +89,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
       async handleonline(@MessageBody() notificationData: any)
       {
         const token: any = notificationData.token;
-        console.log('notificationData : ', notificationData);
+        // console.log('notificationData : ', notificationData);
         if (token)
         {
           const tokenParts = token.split(' ');
@@ -97,27 +97,29 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           const payload: any = this.authservice.extractPayload(JwtToken);
           const usersId: any [] = await this.user.findFriendsList(payload.userId);
           const users: any[] = [];
+
+          console.log('users : ', usersId);
     
-      await Promise.all(
-        usersId.map(async (user) => {
-          if (user.user1_id === payload.userId)
-          {
-            const userData = await this.user.findUserByID(user.user2_id);
-            users.push(userData);
-          }
-          else if (user.user2_id === payload.userId)
-          {
-              const userData = await this.user.findUserByID(user.user1_id);
-              users.push(userData);
-          }
-        })
-      );
-          console.log('users : ', users);
+      // await Promise.all(
+      //   usersId.map(async (user) => {
+      //     if (user.user1_id === payload.userId)
+      //     {
+      //       const userData = await this.user.findUserByID(user.user2_id);
+      //       users.push(userData);
+      //     }
+      //     else if (user.user2_id === payload.userId)
+      //     {
+      //         const userData = await this.user.findUserByID(user.user1_id);
+      //         users.push(userData);
+      //     }
+      //   })
+      // );
+          // console.log('users : ', users);
           if (users)
           {
             users.map((user) => {
               const targetClientRoom = `room_${user.id}`;
-              console.log('target : ', targetClientRoom);
+              // console.log('target : ', targetClientRoom);
               if (notificationData.status === 'online')
                 this.server.to(targetClientRoom).emit('online', payload.userId);
               else if (notificationData.status === 'offline')

@@ -8,7 +8,7 @@ import { showToast } from "./ShowToast";
 function AddUser()
 {
     const [searchQuery, setsearchQuery] = useState('');
-    const [userFriend, setuserFriend] = useState<{ id: string; username: string; avatar: string; status: string }[]>([]);
+    const [userFriend, setuserFriend] = useState<{ id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
     const [newuserFriend, setnewuserFriend] = useState<{ id: string; username: string; avatar: string; status: string }[]>([]);
     const [updateFriend, setupdateFriend] = useState<{id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
     const [socket, setsocket] = useState<Socket| null>(null);
@@ -74,24 +74,24 @@ function AddUser()
             });
     }, [JwtToken]);
 
-    useEffect(() => {
-        fetch('http://localhost:3001/api/Dashboard/allUsers/filter', {
-            method: 'Get',
-            headers: {
-              'Authorization' : `Bearer ${JwtToken}`,
-              'Content-Type': 'application/json',
-            }
-          })
-            .then((response) => {
-                if (!response.ok)
-                    throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then((data) => setnewuserFriend(data))
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }, [JwtToken]);
+    // useEffect(() => {
+    //     fetch('http://localhost:3001/api/Dashboard/allUsers/filter', {
+    //         method: 'Get',
+    //         headers: {
+    //           'Authorization' : `Bearer ${JwtToken}`,
+    //           'Content-Type': 'application/json',
+    //         }
+    //       })
+    //         .then((response) => {
+    //             if (!response.ok)
+    //                 throw new Error('Network response was not ok');
+    //             return response.json();
+    //         })
+    //         .then((data) => setnewuserFriend(data))
+    //         .catch((error) => {
+    //             console.error('Error:', error);
+    //         });
+    // }, [JwtToken]);
 
     useEffect(() => 
     {
@@ -104,8 +104,9 @@ function AddUser()
             );
             setupdateFriend(filterFriends);
         }
-        // if (newuserFriend.length != 0) 
+        // if (newuserFriend) 
         // {
+        //     console.log('Im here');
         //     const updatedFriends = updateFriend.map((friend) => {
         //         const newUser = newuserFriend.find((user) => user.id === friend.id);
         //         if (newUser) {

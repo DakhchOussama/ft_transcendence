@@ -295,6 +295,18 @@ function NavBar()
                                     </div>)
                                 }
                                 }
+                                {if (request.type === 'FRIENDSHIP_REQUEST') {
+                                    return (<div className={NavBarCSS.click_icons_friend_request} key={request.id_notif}>
+                                        <div className={NavBarCSS.click_icons_friend_request_msg}>
+                                        <img src={request.user2Avatar} alt="Photo"/>
+                                        <div><p id="notification-nameuser">{request.user2Username}</p><p> send you a friend follow request.</p></div>
+                                        </div>
+                                        <div className={NavBarCSS.click_icons_friend_request_button}>
+                                            <button onClick={() => accept_request(request.id, request.user2Username)}><img src="checkmark.png" alt="Photo"></img></button>
+                                        </div>
+                                    </div>)
+                                }
+                                }
                             })}
                         </>
                     </div>

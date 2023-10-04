@@ -102,7 +102,7 @@ async findAllUsers(excludedUserid: string)
 }
 
 async createNotification(user1_id :string, user2_id :string, notificationType:NotificationType) {
-  return await this.prisma.prismaClient.notification.create({
+  await this.prisma.prismaClient.notification.create({
     data: {
       user1_id: user1_id ,
       user2_id: user2_id ,
