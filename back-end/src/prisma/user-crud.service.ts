@@ -194,8 +194,7 @@ async findFriendship(current_user_id: string, targeted_user_id: string)
     {
       where : {
         OR: [
-          { user1_id: current_user_id, user2_id: targeted_user_id },
-          { user1_id: targeted_user_id, user2_id: current_user_id },
+          { user1_id: current_user_id, user2_id: targeted_user_id }
         ],
         },
       select :
