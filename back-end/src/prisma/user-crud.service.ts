@@ -188,7 +188,6 @@ async findFriendsList(id: string) {
   return friends_ids;
 }
 
-
 async findFriendship(current_user_id: string, targeted_user_id: string)
 {
   const friendship = await this.prisma.prismaClient.friendships.findFirst (
@@ -201,12 +200,14 @@ async findFriendship(current_user_id: string, targeted_user_id: string)
         },
       select :
       {
-        id :true
+        id: true,
       }
     }
   )
   return friendship ? friendship.id : null 
 }
+
+
 
 
 // Retrieve user stats (wins, losses, ladder level, achievements, etc.).
