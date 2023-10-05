@@ -5,41 +5,21 @@ import { faUserPlus, faClock } from '@fortawesome/free-solid-svg-icons';
 import { Socket, io } from "socket.io-client";
 import Cookies from "js-cookie";
 import { showToast } from "./ShowToast";
+import newSocket from "../GlobalComponents/Socket/socket";
 function AddUser()
 {
     const [searchQuery, setsearchQuery] = useState('');
     const [userFriend, setuserFriend] = useState<{ id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
     const [updateFriend, setupdateFriend] = useState<{id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
-    const [socket, setsocket] = useState<Socket| null>(null);
     const [clickedUsers, setClickedUsers] = useState<string[]>([]);
     const JwtToken = Cookies.get("access_token");
     
-    useEffect(() => {
-        if (!socket) {
-            const newSocket = io('http://localhost:3001', {
-              transports: ['websocket'],
-              query: {
-                  token: `Bearer ${JwtToken}`,
-              }
-            });
-      
-            newSocket.on('connect', () => {
-              setsocket(newSocket);
-            });
-      
-            newSocket.on('disconnect', () => {
-            });
-    
-          return () => {
-            newSocket.disconnect();
-          };
-        }
-      }, [JwtToken]);
     
 
     function handleclickButtom(user_id: string, username: string)
     {
-        if (user_id && socket)
+        console.log('Im here : ' + user_id + ' socket : ' + newSocket);
+        if (user_id && newSocket)
         {
             const notificationData = {
                 user_id: user_id,
@@ -48,7 +28,7 @@ function AddUser()
             }
             if (notificationData)
             {
-                socket.emit('sendNotification',notificationData);
+                newSocket.emit('sendNotification',notificationData);
                 showToast(`Friend Request To ${username}`, "success");
                 setClickedUsers(prevClickedUsers => [...prevClickedUsers, user_id]);
             }

@@ -6,24 +6,18 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect } from 'react';
 import Cookies from "js-cookie";
-import { io } from 'socket.io-client';
+import  newSocket from '../../components/GlobalComponents/Socket/socket'
 
 
 function Dashboard() {
   const JwtToken = Cookies.get("access_token");
   useEffect(() => {
-    
-        const newSocket = io('http://localhost:3001', {
-          transports: ['websocket']
-        });
         const statusData = {
             token: `Bearer ${JwtToken}`,
             status: 'online'
         }
+        newSocket.on('connect', () => {});
         newSocket.emit('status', statusData);
-      return () => {
-        newSocket.disconnect();
-      };
   }, [JwtToken]);
   return (
     <Structure>
@@ -31,6 +25,7 @@ function Dashboard() {
       <DisplayComponent></DisplayComponent>
     </Structure>
   );
+  
 }
 
 export default  Dashboard;

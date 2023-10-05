@@ -89,16 +89,9 @@ export class DashboardController {
     
       await Promise.all(
         usersId.map(async (user) => {
-          if (user.user1_id === payload.userId)
-          {
-            const userData = await this.user.findUserByID(user.user2_id);
+            const userData = await this.user.findUserByID(user);
             users.push(userData);
-          }
-          else if (user.user2_id === payload.userId)
-          {
-              const userData = await this.user.findUserByID(user.user1_id);
-              users.push(userData);
-          }
+          
         })
       );
       return response.status(200).send(users);

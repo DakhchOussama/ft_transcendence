@@ -3,12 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {useState, useEffect} from "react";
 import Setting from "./Setting";
 import NavBarCSS from './NavBar.module.css';
-import { Socket, io } from "socket.io-client";
 import Cookies from "js-cookie";
 import { showToast } from "@/components/Dashboard/ShowToast";
 import { toast } from "react-toastify";
 import CustomToast from "@/components/Dashboard/CustomToast";
 import { useRouter } from "next/navigation";
+import newSocket from "../Socket/socket";
 
 
 function NavBar()
@@ -24,14 +24,13 @@ function NavBar()
     const [searchQuery, setsearchQuery] = useState('');
     const [notificationrequest, setnotificationrequest] = useState(false);
     const [tablenotification, settablenotification] = useState<{id_notif: string, id: string; user2Username: string; user2Avatar: string; type: string}[]>([]);
-    const [socket, setsocket] = useState<Socket| null>(null);
     const JwtToken = Cookies.get("access_token");
     let count = 0;
     const router = useRouter();
 
     function handleclickButtom(user_id: number)
     {
-        if (user_id && socket)
+        if (user_id && newSocket)
         {
             const notificationData = {
                 user_id: user_id,
@@ -40,7 +39,7 @@ function NavBar()
             }
             if (notificationData)
             {
-                socket.emit('sendNotification',notificationData);
+                newSocket.emit('sendNotification',notificationData);
             }
         }
     }
@@ -103,9 +102,9 @@ function NavBar()
             response: 'accept',
             token: `Bearer ${JwtToken}`,
         }
-        if (socket)
+        if (newSocket)
         {
-            socket.emit('responserequest', notificationData);
+            newSocket.emit('responserequest', notificationData);
             showToast(`add ${username}`, 'add');
         }
     }
@@ -132,8 +131,8 @@ function NavBar()
                 token: `Bearer ${JwtToken}`,
                 status: 'offline'
             }
-            if (socket)
-                socket.emit('status', statusData);
+            if (newSocket)
+                newSocket.emit('status', statusData);
         }
         catch (error)
         {
@@ -162,22 +161,7 @@ function NavBar()
     }, [JwtToken, userFriend]);
 
     useEffect(() => {
-        if (!socket) {
-          const newSocket = io('http://localhost:3001', {
-            transports: ['websocket'],
-            query: {
-                token: `Bearer ${JwtToken}`,
-            }
-          });
-    
-          newSocket.on('connect', () => {
-            setsocket(newSocket);
-            
-          });
-    
-          newSocket.on('disconnect', () => {
-          });
-    
+
           newSocket.on("sendlist", (notificationlist) => {
             if (notificationlist)
             {
@@ -206,7 +190,7 @@ function NavBar()
                     id: notificationData.id,
                     user2Username: notificationData.username,
                     user2Avatar: notificationData.avatar,
-                    type: 'ACCEPTED_INVITATION',
+                    type: 'FRIENDSHIP_REQUEST',
                 };
                 if (transformedData)
                 {
@@ -225,11 +209,6 @@ function NavBar()
                 }
             }
           });
-    
-          return () => {
-            newSocket.disconnect();
-          };
-        }
       }, []); // check
 
     useEffect(() => 

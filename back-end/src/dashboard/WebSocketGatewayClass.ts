@@ -21,6 +21,8 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           const tokenParts = token.split(' ');
         const JwtToken: string = tokenParts[1];
 
+
+
         const payload: any = this.authservice.extractPayload(JwtToken);
         const clientRoom = `room_${payload.userId}`;
         client.join(clientRoom);
@@ -28,20 +30,6 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         // console.log('notification table : ', notificationtable);
         if (notificationtable.length)
             client.emit('sendlist', notificationtable);
-        const usersId: any[] = await this.user.findFriendsList(payload.userId);
-        if (usersId)
-        {
-          const users: any[] = [];
-          await Promise.all(
-          usersId.map(async (user) => {
-            const userData = await this.user.findUserByID(user);
-            users.push(userData);
-          })
-          );
-          console.log(`users id of ${payload.userId} : `, users);
-          if (users)
-            this.server.emit('friend', users);
-        }
         this.clients.set(client.id, client);
         }
     }
@@ -56,6 +44,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
     // @UseGuards(JwtAuthGuard)
     async handleSendNotification(@MessageBody() notificationData: any){
         const targetClientRoom = `room_${notificationData.user_id}`;
+        console.log('target client ', targetClientRoom);
         const token: any = notificationData.token;
         const tokenParts = token.split(' ');
         const JwtToken: string = tokenParts[1];
@@ -89,6 +78,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
             {
               await this.user.createFriendShip(payload.userId, notificationData.user_id);
               const usersId: any[] = await this.user.findFriendsList(payload.userId);
+              console.log('IDDDDD : ', usersId);
               const users: any[] = [];
               await Promise.all(
               usersId.map(async (user) => {
@@ -96,8 +86,9 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
                 users.push(userData);
               })
               );
-              const MyClientRoom = `room_${payload.user_id}`;
-              this.server.to(MyClientRoom).emit('friend', users);
+              console.log('users ', users);
+              const MyClientRoom = `room_${payload.userId}`;
+              this.server.emit('friend', users);
 
               // send to other user
               const usersId_other: any[] = await this.user.findFriendsList(notificationData.user_id);
@@ -109,6 +100,8 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
                 users_other.push(userData);
               })
               );
+              console.log('other useeeeeeer : ', users_other);
+              console.log('notiiiiiiif : ', notificationData.user_id);
               const targetClientRoom = `room_${notificationData.user_id}`;
               this.server.to(targetClientRoom).emit('friend', users_other);
             }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {FaSearch} from 'react-icons/fa';
 import Cookies from "js-cookie";
-import { io } from "socket.io-client";
+import newSocket  from '../GlobalComponents/Socket/socket';
 
 function HomePage()
 {
@@ -38,63 +38,65 @@ function HomePage()
         }
     }, [searchQuery, selectValue, userFriend]);
     
-    // useEffect(() => {
-    //     fetch('http://localhost:3001/api/Dashboard/friends', {
-    //         method: 'Get',
-    //         headers: {
-    //           'Authorization' : `Bearer ${JwtToken}`,
-    //           'Content-Type': 'application/json',
-    //         }
-    //       })
-    //         .then((response) => {
-    //             if (!response.ok)
-    //                 throw new Error('Network response was not ok');
-    //             return response.json();
-    //         })
-    //         .then((data) => setuserFriend(data))
-    //         .catch((error) => {
-    //             console.error('Error:', error);
-    //         });
-    // }, [JwtToken]);
+    useEffect(() => {
+        fetch('http://localhost:3001/api/Dashboard/friends', {
+            method: 'Get',
+            headers: {
+              'Authorization' : `Bearer ${JwtToken}`,
+              'Content-Type': 'application/json',
+            }
+          })
+            .then((response) => {
+                if (!response.ok)
+                    throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then((data) => setuserFriend(data))
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }, [JwtToken]);
 
       useEffect(() => {
-    
-        const newSocket = io('http://localhost:3001', {
-          transports: ['websocket']
-        });
         
         newSocket.on('online', (userObj) => {
-            console.log('Im here');
-            if (userObj)
-            {
-                updateFriend.map((user) => {
-                    if (user.id === userObj)
-                    {
-                        user.status === 'ONLINE';
-                    }
-                })
+            if (userObj) {
+                setupdateFriend((prevFriends) => {
+                    return prevFriends.map((user) => {
+                        if (user.id === userObj) {
+                            return { ...user, status: 'ONLINE' };
+                        } else {
+                            return user;
+                        }
+                    });
+                });
             }
         });
+        
         newSocket.on('offline', (userObj) => {
-            console.log('Im here');
-            if (userObj)
-            {
-                updateFriend.map((user) => {
-                    if (user.id === userObj)
-                    {
-                        user.status === 'OFFLINE';
-                    }
-                })
+            if (userObj) {
+                setupdateFriend((prevFriends) => {
+                    return prevFriends.map((user) => {
+                        if (user.id === userObj) {
+                            return { ...user, status: 'OFFLINE' };
+                        } else {
+                            return user;
+                        }
+                    });
+                });
             }
         });
+        
         newSocket.on('friend', (friends) => {
-            console.log('friends :', friends);
-            if (friends)
-                setuserFriend(friends);
+            try {
+                console.log('Received friend event with data:', friends);
+                if (friends) {
+                    setuserFriend(friends);
+                }
+            } catch (error) {
+                console.error('Error handling friend event:', error);
+            }
         })
-      return () => {
-        newSocket.disconnect();
-      };
   }, [JwtToken]);
     
     return (
