@@ -37,7 +37,7 @@ const CustomToast: React.FC<CustomToastProps> = ({ id, obj, onClose }) => {
             <p className="text-sm font-medium text-gray-900">
               {obj.user2Username}
             </p>
-            {obj.type === "FRIENDSHIP_REQUES" && (
+            {obj.type === "FRIENDSHIP_REQUEST" && (
                 <p className="mt-1 text-sm text-gray-500">
                 send you Friend Notification
                 </p>

@@ -195,4 +195,29 @@ export class DashboardController {
       await this.user.changeVisibily(payload.userId, "OFFLINE");
     }
   }
+  @Get('Dashboard/notification')
+  @UseGuards(JwtAuthGuard)
+  async sendnotification(@Req() request, @Res() response: any)
+  {
+    const authorizationHeader = request.headers.authorization;
+    if (!authorizationHeader) {
+      return response.status(401).send({ error: 'Authorization header is missing' });
+    }
+    const tokenParts = authorizationHeader.split(' ');
+    if (tokenParts.length !== 2 || tokenParts[0] !== 'Bearer') {
+      return response.status(401).send({ error: 'Invalid authorization header format' });
+    }
+
+    const JwtToken: string = tokenParts[1];
+
+    try {
+      const payload: any = this.authservice.extractPayload(JwtToken);
+      const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
+      return response.status(200).send(notificationtable);
+    } catch (error) {
+      // Handle any errors that occur during the process
+      console.error('Error:', error);
+      return response.status(500).send({ error: 'Internal Server Error' });
+    }
+  }
 }

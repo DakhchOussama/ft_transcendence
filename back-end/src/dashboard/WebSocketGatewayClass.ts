@@ -16,22 +16,15 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
 
     async handleConnection(client: Socket) {
         const token : any = client.handshake.query.token;
-        console.log('token : ', token);
         if (token)
         {
           const tokenParts = token.split(' ');
           const JwtToken: string = tokenParts[1];
           const payload: any = this.authservice.extractPayload(JwtToken);
-          console.log('payload :', payload);
         if (payload)
         {
           const clientRoom = `room_${payload.userId}`;
-          console.log('target client ', clientRoom);
           client.join(clientRoom);
-          const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
-          // console.log('notification table : ', notificationtable);
-          if (notificationtable.length)
-              client.emit('sendlist', notificationtable);
         }
         this.clients.set(client.id, client);
         }
@@ -47,7 +40,6 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
     // @UseGuards(JwtAuthGuard)
     async handleSendNotification(@MessageBody() notificationData: any){
         const targetClientRoom = `room_${notificationData.user_id}`;
-        console.log('target client ', targetClientRoom);
         const token: any = notificationData.token;
         const tokenParts = token.split(' ');
         const JwtToken: string = tokenParts[1];

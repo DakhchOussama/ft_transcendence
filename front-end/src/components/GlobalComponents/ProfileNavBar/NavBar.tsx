@@ -161,14 +161,25 @@ function NavBar()
     }, [JwtToken, userFriend]);
 
     useEffect(() => {
+        fetch('http://localhost:3001/api/Dashboard/notification', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${JwtToken}`,
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((response) => {
+            if (!response.ok)
+                throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then((data) => settablenotification(data))
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+        })
+    }, [JwtToken]);
 
-          newSocket.on("sendlist", (notificationlist) => {
-            if (notificationlist)
-            {
-                settablenotification(notificationlist);
-            }
-          });
-
+    useEffect(() => {
           newSocket.on("notification", (notificationData) => {
             if (notificationData)
             {
