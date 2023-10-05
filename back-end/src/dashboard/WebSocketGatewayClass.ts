@@ -16,20 +16,23 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
 
     async handleConnection(client: Socket) {
         const token : any = client.handshake.query.token;
+        console.log('token : ', token);
         if (token)
         {
           const tokenParts = token.split(' ');
-        const JwtToken: string = tokenParts[1];
-
-
-
-        const payload: any = this.authservice.extractPayload(JwtToken);
-        const clientRoom = `room_${payload.userId}`;
-        client.join(clientRoom);
-        const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
-        // console.log('notification table : ', notificationtable);
-        if (notificationtable.length)
-            client.emit('sendlist', notificationtable);
+          const JwtToken: string = tokenParts[1];
+          const payload: any = this.authservice.extractPayload(JwtToken);
+          console.log('payload :', payload);
+        if (payload)
+        {
+          const clientRoom = `room_${payload.userId}`;
+          console.log('target client ', clientRoom);
+          client.join(clientRoom);
+          const notificationtable = await this.user.getUserNotificationsWithUser2Data(payload.userId);
+          // console.log('notification table : ', notificationtable);
+          if (notificationtable.length)
+              client.emit('sendlist', notificationtable);
+        }
         this.clients.set(client.id, client);
         }
     }
@@ -78,6 +81,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
             {
               await this.user.createFriendShip(payload.userId, notificationData.user_id);
               const usersId: any[] = await this.user.findFriendsList(payload.userId);
+              // await this.user. change type of notification to accepted invitation
               console.log('IDDDDD : ', usersId);
               const users: any[] = [];
               await Promise.all(
@@ -88,7 +92,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
               );
               console.log('users ', users);
               const MyClientRoom = `room_${payload.userId}`;
-              this.server.emit('friend', users);
+              this.server.to(MyClientRoom).emit('friend', users);
 
               // send to other user
               const usersId_other: any[] = await this.user.findFriendsList(notificationData.user_id);
