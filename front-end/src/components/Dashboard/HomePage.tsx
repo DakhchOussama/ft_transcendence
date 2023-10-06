@@ -61,29 +61,35 @@ function HomePage()
         
         newSocket.on('online', (userObj) => {
             if (userObj) {
-                setupdateFriend((prevFriends) => {
-                    return prevFriends.map((user) => {
-                        if (user.id === userObj) {
-                            return { ...user, status: 'ONLINE' };
-                        } else {
-                            return user;
-                        }
-                    });
-                });
+                console.log('UserId : ', userObj);
+                // if (updateFriend)
+                // {
+                //     const newtab : any [] = updateFriend.map((data) => {
+                //         if (data.id === userObj)
+                //         {
+                //             data.status = 'ONLINE';
+                //         }
+                //     });
+                //     setupdateFriend(newtab);
+                // }
+                setupdateFriend(userObj);
             }
         });
         
         newSocket.on('offline', (userObj) => {
             if (userObj) {
-                setupdateFriend((prevFriends) => {
-                    return prevFriends.map((user) => {
-                        if (user.id === userObj) {
-                            return { ...user, status: 'OFFLINE' };
-                        } else {
-                            return user;
-                        }
-                    });
-                });
+                console.log('UserId : ', userObj);
+                // if (updateFriend)
+                // {
+                //     const newtab : any [] = updateFriend.map((data) => {
+                //         if (data.id === userObj)
+                //         {
+                //             data.status = 'OFFLINE';
+                //         }
+                //     });
+                //     setupdateFriend(newtab);
+                // }
+                setupdateFriend(userObj);
             }
         });
         

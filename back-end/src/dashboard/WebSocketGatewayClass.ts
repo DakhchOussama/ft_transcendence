@@ -67,10 +67,10 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           // console.log('user_id', payload.userId);
           try
           {
-            console.log('My Id : ' + payload.userId + ' notificationData : ' + notificationData.user_id);
+            // console.log('My Id : ' + payload.userId + ' notificationData : ' + notificationData.user_id);
             let check = await this.user.findFriendship(payload.user_id, notificationData.user_id);
             let check_another = await this.user.findFriendship(notificationData.user_id, payload.user_id);
-            console.log('check : ' + check + ' check_another : ' + check_another);
+            // console.log('check : ' + check + ' check_another : ' + check_another);
             if (check === null || check_another === null)
             {
               await this.user.createFriendShip(payload.userId, notificationData.user_id);
@@ -114,41 +114,53 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
       async handleonline(@MessageBody() notificationData: any)
       {
         const token: any = notificationData.token;
-        // console.log('notificationData : ', notificationData);
         if (token)
         {
           const tokenParts = token.split(' ');
           const JwtToken: string = tokenParts[1];
           const payload: any = this.authservice.extractPayload(JwtToken);
           const usersId: any [] = await this.user.findFriendsList(payload.userId);
-          const users: any[] = [];
-
-          // console.log('users : ', usersId);
-    
-      // await Promise.all(
-      //   usersId.map(async (user) => {
-      //     if (user.user1_id === payload.userId)
-      //     {
-      //       const userData = await this.user.findUserByID(user.user2_id);
-      //       users.push(userData);
-      //     }
-      //     else if (user.user2_id === payload.userId)
-      //     {
-      //         const userData = await this.user.findUserByID(user.user1_id);
-      //         users.push(userData);
-      //     }
-      //   })
-      // );
           // console.log('users : ', users);
-          if (users)
+          if (usersId)
           {
-            users.map((user) => {
-              const targetClientRoom = `room_${user.id}`;
-              // console.log('target : ', targetClientRoom);
+            usersId.map(async (userId) => {
+              const targetClientRoom = `room_${userId}`;
+          //     // console.log('target : ', targetClientRoom);
               if (notificationData.status === 'online')
-                this.server.to(targetClientRoom).emit('online', payload.userId);
+              {
+                await this.user.changeVisibily(payload.userId, "ONLINE");
+          //       // const user = await this.user.findUserByID(userId);
+          //       // console.log('users : ', user);
+                const usersId: any[] = await this.user.findFriendsList(userId);
+                // console.log("users ID : ", usersId);
+                const users: any[] = [];
+
+                await Promise.all(
+                  usersId.map(async (user) => {
+                      const userData = await this.user.findUserByID(user);
+                      users.push(userData);
+
+                  })
+                );
+                this.server.to(targetClientRoom).emit('online', users);
+              }
               else if (notificationData.status === 'offline')
-                this.server.to(targetClientRoom).emit('offline', payload.userId);
+              {
+                await this.user.changeVisibily(payload.userId, "OFFLINE");
+          //       this.server.to(targetClientRoom).emit('offline', payload.userId);
+          const usersId: any[] = await this.user.findFriendsList(userId);
+                // console.log("users ID : ", usersId);
+                const users: any[] = [];
+
+                await Promise.all(
+                  usersId.map(async (user) => {
+                      const userData = await this.user.findUserByID(user);
+                      users.push(userData);
+
+                  })
+                );
+                this.server.to(targetClientRoom).emit('offline', users);
+              }
             })
           }
         }
