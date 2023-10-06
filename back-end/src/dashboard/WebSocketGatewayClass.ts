@@ -71,7 +71,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
             let check = await this.user.findFriendship(payload.user_id, notificationData.user_id);
             let check_another = await this.user.findFriendship(notificationData.user_id, payload.user_id);
             // console.log('check : ' + check + ' check_another : ' + check_another);
-            if (check === null || check_another === null)
+            if (check === null && check_another === null)
             {
               await this.user.createFriendShip(payload.userId, notificationData.user_id);
               const usersId: any[] = await this.user.findFriendsList(payload.userId);
