@@ -13,8 +13,6 @@ function AddUser()
     const [updateFriend, setupdateFriend] = useState<{id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
     const [clickedUsers, setClickedUsers] = useState<string[]>([]);
     const JwtToken = Cookies.get("access_token");
-    
-    
 
     function handleclickButtom(user_id: string, username: string)
     {

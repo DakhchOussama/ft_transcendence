@@ -24,6 +24,7 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
         if (payload)
         {
           const clientRoom = `room_${payload.userId}`;
+          console.log('clientRoom : ', clientRoom);
           client.join(clientRoom);
         }
         this.clients.set(client.id, client);

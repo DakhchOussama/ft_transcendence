@@ -126,11 +126,17 @@ svg.svg-inline--fa.fa-shield-halved
 aside
 {
     background-color: #24234F;
-    height: 100vh;
     position: absolute;
     /* top: 91px; */
+    height: 100%;
     width: 19%;
     border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.left-aside
+{
+    
+    /* position: absolute; */
 }
 
 .parent-section-background
@@ -240,8 +246,7 @@ aside
 }
 
 .section-container
-{
-    
+{   
     width: 70%;
     height: 100%;
     margin-top: 20px;
