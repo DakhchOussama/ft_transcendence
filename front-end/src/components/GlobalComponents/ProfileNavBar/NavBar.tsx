@@ -1,4 +1,4 @@
-import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {useState, useEffect} from "react";
 import Setting from "./Setting";
@@ -18,28 +18,31 @@ function NavBar()
     const [settingindex, setsettingindex] = useState(false);
     const [closeindex, setcloseindex] = useState(false);
     const [user, setUsers] = useState<any>(null);
-    const [userFriend, setuserFriend] = useState<{id: number; username: string; avatar: string; status: string }[]>([]);
-    const [updateFriend, setupdateFriend] = useState<{id: number; username: string; avatar: string; status: string }[]>([]);
+    const [userFriend, setuserFriend] = useState<{id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
+    const [updateFriend, setupdateFriend] = useState<{id: string; username: string; avatar: string; status: string, pending?: boolean }[]>([]);
     const [searchUser, setsearchUser] = useState(false);
     const [searchQuery, setsearchQuery] = useState('');
     const [notificationrequest, setnotificationrequest] = useState(false);
+    const [clickedUsers, setClickedUsers] = useState<string[]>([]);
     const [tablenotification, settablenotification] = useState<{id_notif: string, id: string; user2Username: string; user2Avatar: string; type: string}[]>([]);
     const JwtToken = Cookies.get("access_token");
     let count = 0;
     const router = useRouter();
 
-    function handleclickButtom(user_id: number)
+    function handleclickButtom(user_id: string, username: string)
     {
         if (user_id && newSocket)
         {
             const notificationData = {
                 user_id: user_id,
-                type: 'ACCEPTED_INVITATION',
+                type: 'FRIENDSHIP_REQUEST',
                 token: `Bearer ${JwtToken}`,
             }
             if (notificationData)
             {
                 newSocket.emit('sendNotification',notificationData);
+                showToast(`Friend Request To ${username}`, "success");
+                setClickedUsers(prevClickedUsers => [...prevClickedUsers, user_id]);
             }
         }
     }
@@ -253,7 +256,11 @@ function NavBar()
                             <img src={user.avatar} alt="Photo"/>
                             <p>{user.username}</p>
                             </div>
-                            <FontAwesomeIcon icon={faUserPlus} onClick={() => handleclickButtom(user.id)} />
+                            {clickedUsers.includes(user.id) || user.pending === true ? (
+                                <FontAwesomeIcon icon={faClock} style={{ cursor: 'auto', margin: '5px' }} />
+                            ) : (
+                                <FontAwesomeIcon icon={faUserPlus} onClick={() => handleclickButtom(user.id, user.username)} />
+                            )}
                             </div>
                         </div>
                 ))}

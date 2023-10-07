@@ -4,6 +4,9 @@ import { Injectable, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-aut.guard';
 import { UserCrudService } from 'src/prisma/user-crud.service';
 import { AuthService } from 'src/auth/auth.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { stringify } from 'querystring';
+import { checkPrime } from 'crypto';
 
 @WebSocketGateway({cors: true, origins: 'http://localhost:3000'})
 @Injectable()
@@ -11,7 +14,7 @@ import { AuthService } from 'src/auth/auth.service';
 export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisconnect
 {
     @WebSocketServer() server: Server;
-    constructor(private readonly user : UserCrudService, private readonly authservice: AuthService){};
+    constructor(private readonly user : UserCrudService, private readonly authservice: AuthService, private readonly service: PrismaService){};
     private clients: Map<string, Socket> = new Map();
 
     async handleConnection(client: Socket) {
@@ -69,15 +72,21 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
           try
           {
             // console.log('My Id : ' + payload.userId + ' notificationData : ' + notificationData.user_id);
-            let check = await this.user.findFriendship(payload.user_id, notificationData.user_id);
-            let check_another = await this.user.findFriendship(notificationData.user_id, payload.user_id);
-            // console.log('check : ' + check + ' check_another : ' + check_another);
-            if (check === null && check_another === null)
+            const check = await this.service.prismaClient.friendships.findMany({
+              where: {
+                  OR: [
+                      {user1_id: payload.userId, user2_id: notificationData.user_id},
+                      {user1_id: notificationData.user_id, user2_id: payload.userId},
+                  ],
+              },
+              select : {
+                id: true,
+              }
+            });
+            if (check.length === 0)
             {
               await this.user.createFriendShip(payload.userId, notificationData.user_id);
               const usersId: any[] = await this.user.findFriendsList(payload.userId);
-              // await this.user. change type of notification to accepted invitation
-              // console.log('IDDDDD : ', usersId);
               const users: any[] = [];
               await Promise.all(
               usersId.map(async (user) => {
@@ -85,7 +94,6 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
                 users.push(userData);
               })
               );
-              // console.log('users ', users);
               const MyClientRoom = `room_${payload.userId}`;
               this.server.to(MyClientRoom).emit('friend', users);
 
@@ -99,8 +107,6 @@ export class WebSocketGatewayClass implements OnGatewayConnection, OnGatewayDisc
                 users_other.push(userData);
               })
               );
-              // console.log('other useeeeeeer : ', users_other);
-              // console.log('notiiiiiiif : ', notificationData.user_id);
               const targetClientRoom = `room_${notificationData.user_id}`;
               this.server.to(targetClientRoom).emit('friend', users_other);
             }
