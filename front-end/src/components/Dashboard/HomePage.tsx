@@ -14,6 +14,9 @@ function HomePage()
     const handleInputChange = (event : any) => 
     {
         setselectValue(event.target.value);
+    }
+    useEffect(() => 
+    {
         if (searchQuery === '')
         {
             if (selectValue != 'all-user')
@@ -33,7 +36,7 @@ function HomePage()
             );
             setupdateFriend(filterFriends);
         }
-    }
+    }, [searchQuery, selectValue, userFriend]);
     
     useEffect(() => {
         fetch('http://localhost:3001/api/Dashboard/friends', {
@@ -52,7 +55,7 @@ function HomePage()
             .catch((error) => {
                 console.error('Error:', error);
             });
-    }, [JwtToken]);
+    }, [JwtToken, userFriend]);
 
       useEffect(() => {
         
@@ -78,7 +81,7 @@ function HomePage()
                 console.error('Error handling friend event:', error);
             }
         })
-  }, [JwtToken]);
+  }, [JwtToken, updateFriend]);
     
     return (
         <>
