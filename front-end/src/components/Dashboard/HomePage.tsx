@@ -14,9 +14,6 @@ function HomePage()
     const handleInputChange = (event : any) => 
     {
         setselectValue(event.target.value);
-    }
-    useEffect(() => 
-    {
         if (searchQuery === '')
         {
             if (selectValue != 'all-user')
@@ -36,7 +33,7 @@ function HomePage()
             );
             setupdateFriend(filterFriends);
         }
-    }, [searchQuery, selectValue, userFriend]);
+    }
     
     useEffect(() => {
         fetch('http://localhost:3001/api/Dashboard/friends', {
@@ -61,34 +58,12 @@ function HomePage()
         
         newSocket.on('online', (userObj) => {
             if (userObj) {
-                console.log('UserId : ', userObj);
-                // if (updateFriend)
-                // {
-                //     const newtab : any [] = updateFriend.map((data) => {
-                //         if (data.id === userObj)
-                //         {
-                //             data.status = 'ONLINE';
-                //         }
-                //     });
-                //     setupdateFriend(newtab);
-                // }
                 setupdateFriend(userObj);
             }
         });
         
         newSocket.on('offline', (userObj) => {
             if (userObj) {
-                console.log('UserId : ', userObj);
-                // if (updateFriend)
-                // {
-                //     const newtab : any [] = updateFriend.map((data) => {
-                //         if (data.id === userObj)
-                //         {
-                //             data.status = 'OFFLINE';
-                //         }
-                //     });
-                //     setupdateFriend(newtab);
-                // }
                 setupdateFriend(userObj);
             }
         });
