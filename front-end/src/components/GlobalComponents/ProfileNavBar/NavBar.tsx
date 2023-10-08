@@ -130,12 +130,6 @@ function NavBar()
             }).then((response) => {
                 console.log(response);
             });
-            const statusData = {
-                token: `Bearer ${JwtToken}`,
-                status: 'offline'
-            }
-            if (newSocket)
-                newSocket.emit('status', statusData);
         }
         catch (error)
         {
@@ -143,6 +137,12 @@ function NavBar()
         }
         Cookies.remove('access_token', { path: '/' });
     }
+
+    useEffect(() => {
+        newSocket.on('changestatus', (user: any) => {
+            setUsers(user);
+        })
+    })
 
     useEffect(() => {
         fetch('http://localhost:3001/api/Dashboard/allUsers', {

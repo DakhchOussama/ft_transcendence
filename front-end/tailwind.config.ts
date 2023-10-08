@@ -9,6 +9,9 @@ const config: Config = {
     './src/components/HomePage/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/2fa/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/updatecredentials/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/Structure.tsx',
+    './src/app/game/page.tsx',
+    './src/components/game/GameLandingPage.tsx',
   ],
   theme: {
     extend: {

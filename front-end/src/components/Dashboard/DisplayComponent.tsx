@@ -20,7 +20,6 @@ function DisplayComponent()
   useEffect(() => {
         const statusData = {
             token: `Bearer ${JwtToken}`,
-            status: 'online'
         }
         newSocket.emit('status', statusData);
   }, [JwtToken]);
