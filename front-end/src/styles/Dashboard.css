@@ -18,22 +18,22 @@
     font-family: 'Open Sans', sans-serif;
 }
 
-.home-page *::-webkit-scrollbar {
+.home-page ::-webkit-scrollbar {
     width: 0.4em;
     background-color: transparent;
 }
 
-.home-page *::-webkit-scrollbar-thumb {
+.home-page ::-webkit-scrollbar-thumb {
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 6px;
   border: 2px solid transparent;
 }
 
-.home-page *::-webkit-scrollbar-thumb:hover {
+.home-page ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.4);
 }
 
-.home-page *::-webkit-scrollbar-thumb:active {
+.home-page ::-webkit-scrollbar-thumb:active {
   background-color: white;
 }
 
@@ -131,6 +131,7 @@ aside
     border-top: 1px solid rgba(255, 255, 255, 0.3);
     background-color: #24234F;
     height: 100vh;
+    overflow-y: auto;
 }
 
 .parent-section-background
@@ -1402,13 +1403,13 @@ svg.svg-inline--fa.fa-user-plus
     {
         width: 15px;
         height: 15px;
-        top: 62%;
+        top: 58%;
         left: 61%;
     }
 
     .identification-user div p
     {
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 500;
     }
 
@@ -1942,7 +1943,6 @@ svg.svg-inline--fa.fa-user-plus
         width: 20px;
         height: 20px;
         top: 61%;
-        left: 18px;
     }
     .identification-user div p
     {

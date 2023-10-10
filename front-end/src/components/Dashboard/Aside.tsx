@@ -120,9 +120,9 @@ const Aside: React.FC<AsideProps> = ({onSelectSection}) =>
                     <img src="../up-arrow.png" alt="Photo" width={20} height={20} onClick={handleuparrowfriend} />
                 </div>
                 {isactiveafriend && (
-                    <div className="homepage">
+                    <div className="homepage"  onClick={(event: any) => {router.push("/game");}}>
                     <img src="../games (1).png" alt="Photo" width={20} height={20} />
-                    <button onClick={(event: any) => {router.push("/game");}}>Game Play</button>
+                    <button>Game Play</button>
                     </div>
                 )}
             </div>

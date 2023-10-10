@@ -311,7 +311,8 @@ function NavBar()
                 </div>
                 <div className={NavBarCSS.nav_name}>
                 <p id={NavBarCSS.nameuser}>{user?.username}</p>
-                <p id={NavBarCSS.online}><span>{user?.status}</span><img src="../new-moon.png" alt="Photo" width={10} height={10} /></p>
+                {user?.status === 'ONLINE' && (<p id={NavBarCSS.online}><span>{user?.status}</span><img src="../new-moon.png" alt="Photo" width={10} height={10} /></p>)}
+                {user?.status === 'IN_GAME' && (<p id={NavBarCSS.ingame}><span>in_Game</span><img src="../ping-pong.png" alt="Photo" width={13} height={13} /></p>)}
                 </div>
          <div className={NavBarCSS.aa}>
          <img src={user?.avatar} alt="Photo" width={65} height={60} onClick={handleeventimage} />

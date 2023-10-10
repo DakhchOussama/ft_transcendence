@@ -31,6 +31,8 @@
     justify-content: center;
 }
 
+
+
 .logo img 
 {
     cursor: pointer;
@@ -198,6 +200,15 @@
     text-transform: uppercase;
 }
 
+#ingame
+{
+    margin-top: 5px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
 #online span
 {
     margin-right: 3px;
@@ -209,6 +220,20 @@
     margin: 0;
     padding: 0;
     margin-top: 7px;
+}
+
+#ingame span
+{
+    margin-bottom: 3px;
+    color: #bc661a;
+    margin-right: 3px;
+    text-transform: lowercase;
+    margin-bottom: 3px;
+}
+
+#ingame img
+{
+    margin-top: 0;
 }
 
 .aa img
@@ -542,11 +567,11 @@
     {
         width: 72px;
     }
-    #online
+    #online,#ingame
     {
         font-size: 11px;
     }
-    #online img
+    #online img,#ingame img
     {
         width: 8px;
         height: 8px;
@@ -660,6 +685,14 @@
     } */
 }
 
+@media screen and (max-width: 477px) and (min-width: 400px)
+{
+    .logo img
+    {
+        margin: 0;
+    }
+}
+
 @media screen and  (max-width: 400px) and (max-width: 400px)
 {
   
@@ -720,7 +753,8 @@
         margin-right: 6px;
     }
     #nameuser,
-    #online
+    #online,
+    #ingame
     {
         font-size: 10px;
     }
@@ -757,7 +791,7 @@
         color: white;
         font-size: 12px;
     }
-    #online img
+    #online img,#ingame img
     {
         margin: 0;
         padding: 0;
@@ -789,7 +823,7 @@
     {
         top: 35px;
         right: 6px;
-        width: 195px;
+        width: 150px;
         height: 70px;
     }
 

@@ -22,13 +22,13 @@ const mono = Space_Mono({
 function GameLandingPage() {
   const JwtToken = Cookies.get("access_token");
 
-  // useEffect(() => {
-  //   const data = {
-  //     status: "INGAME",
-  //     token: `Bearer ${JwtToken}`,
-  //   };
-  //   newSocket.emit("status", data);
-  // }, [JwtToken]);
+  useEffect(() => {
+    const data = {
+      status: "INGAME",
+      token: `Bearer ${JwtToken}`,
+    };
+    newSocket.emit("status", data);
+  }, [JwtToken]);
 
   const [info, setInfo] = useState(false);
 
