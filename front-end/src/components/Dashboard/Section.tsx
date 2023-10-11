@@ -20,6 +20,7 @@ function Section()
         width: '100%',
         height: '100%',
     };
+    let Rank = 0;
 
     const sendData = async (background: File, myfile : string) => 
     {
@@ -158,6 +159,33 @@ function Section()
           );
         }
       }, []);
+    useEffect(() => {
+      fetch('http://localhost:3001/api/Dashboard/Users', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${JwtToken}`,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data) {
+              const Tab : any [] = data;
+              const NumberOfUsers = Tab.length + 1;
+              console.log('Number of users : ', NumberOfUsers);
+          } else {
+            throw new Error('Received empty or invalid JSON data');
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }, []);
     if (gameInformation?.wins || gameInformation?.losses)
         total = gameInformation?.wins + gameInformation?.losses;
     

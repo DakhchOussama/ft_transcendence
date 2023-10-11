@@ -176,8 +176,6 @@ export class WebSocketGatewayClass
             const targetClientRoom = `room_${userId}`;
             //     // console.log('target : ', targetClientRoom);
             await this.user.changeVisibily(payload.userId, 'IN_GAME');
-            //       // const user = await this.user.findUserByID(userId);
-            //       // console.log('users : ', user);
             const usersId: any[] = await this.user.findFriendsList(userId);
             // console.log("users ID : ", usersId);
             const users: any[] = [];
