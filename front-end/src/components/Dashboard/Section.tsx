@@ -20,7 +20,7 @@ function Section()
         width: '100%',
         height: '100%',
     };
-    let Rank = 0;
+    let Rank = 1;
 
     const sendData = async (background: File, myfile : string) => 
     {
@@ -160,7 +160,7 @@ function Section()
         }
       }, []);
     useEffect(() => {
-      fetch('http://localhost:3001/api/Dashboard/Users', {
+      fetch('http://localhost:3001/api/Dashboard/RankUsers', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${JwtToken}`,
@@ -176,8 +176,13 @@ function Section()
         .then((data) => {
           if (data) {
               const Tab : any [] = data;
-              const NumberOfUsers = Tab.length + 1;
-              console.log('Number of users : ', NumberOfUsers);
+              if (gameInformation)
+              {
+                Tab.map((friend) => {
+                  if (friend.ladder_level > gameInformation?.ladder_level)
+                    Rank++;
+               })
+              }
           } else {
             throw new Error('Received empty or invalid JSON data');
           }
@@ -238,7 +243,7 @@ function Section()
                 <hr id="section-line"></hr>
                 <div className="identification-information rank">
                     <h3>Rank</h3>
-                    <p>32</p>
+                    <p>{Rank}</p>
                 </div>
                 </div>
             </div>

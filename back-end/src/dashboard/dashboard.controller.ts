@@ -221,7 +221,7 @@ export class DashboardController {
     }
   }
 
-  @Get('Dashboard/Users')
+  @Get('Dashboard/RankUsers')
   @UseGuards(JwtAuthGuard)
   async RankUsers(@Req() request, @Res() response: any)
   {
@@ -239,7 +239,14 @@ export class DashboardController {
     try {
       const payload: any = this.authservice.extractPayload(JwtToken);
       const Users = await this.user.findAllUsers(payload.userId);
-      return response.status(200).send(Users);
+      const levelsFriends : any [] = [];
+      await Promise.all(
+      Users.map(async (user) => {
+          const Data = await this.user.getUserStats(user.id);
+          levelsFriends.push(Data);
+      })
+      );
+      return response.status(200).send(levelsFriends);
     } catch (error) {
       // Handle any errors that occur during the process
       console.error('Error:', error);
