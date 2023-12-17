@@ -13,6 +13,7 @@ lerna-debug.log*
 
 # OS
 .DS_Store
+package-lock.json
 
 # Tests
 /coverage
@@ -27,11 +28,14 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
+*.png
+*.jpeg
 # IDE - VSCode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
+
 !.vscode/extensions.json
 
 prisma/migrations

@@ -1,5 +1,4 @@
 "use client";
-
 import SettingCss from "./Setting.module.css";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -38,7 +37,7 @@ const Setting: React.FC<Settingprops> = ({ handleSettingData }) => {
 
   useEffect(() => {
     if (JwtToken) {
-      fetch("http://localhost:3001/api/Dashboard", {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_SERV}/api/Dashboard`, {
         method: "Get",
         headers: {
           Authorization: `Bearer ${JwtToken}`,
@@ -54,7 +53,7 @@ const Setting: React.FC<Settingprops> = ({ handleSettingData }) => {
           setImage(data.avatar);
         })
         .catch((error) => {
-          console.error("Error:", error);
+          console.clear();
         });
     }
   }, [JwtToken]);
@@ -65,23 +64,22 @@ const Setting: React.FC<Settingprops> = ({ handleSettingData }) => {
       const formData: any = new FormData();
       formData.append("file", selectedFile);
 
-      fetch("http://localhost:3001/upload/file", {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_SERV}/upload/file`, {
         method: "POST",
         body: formData,
         headers: {
           authorization: `Bearer ${JwtToken}`,
         },
       }).then((response) => {
-        if(response.status === 400){
-          showToast('Failed Upload File', "error");
+        if (response.status === 400) {
+          showToast("Failed Upload File", "error");
           console.clear();
         }
       });
-    } catch (error : any) {
+    } catch (error: any) {
       console.clear();
     }
   };
-
 
   function close() {
     handleSettingData(true);
@@ -134,7 +132,7 @@ const Setting: React.FC<Settingprops> = ({ handleSettingData }) => {
           </form>
         </div>
       </div>
-      {twofa &&  <DashboardTwoFa setTwoFa={setTwofa}></DashboardTwoFa>}
+      {twofa && <DashboardTwoFa setTwoFa={setTwofa}></DashboardTwoFa>}
     </div>
   );
 };

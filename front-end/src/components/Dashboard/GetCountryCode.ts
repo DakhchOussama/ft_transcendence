@@ -1,6 +1,5 @@
-// utils/countryCodeConverter.js
-
-import countryList from 'country-list';
+"use client";
+import countryList from "country-list";
 
 interface Country {
   code: string;
@@ -9,9 +8,11 @@ interface Country {
 
 const GetCountryCode = (countryName: string): string | null => {
   const countries: Country[] = countryList.getData();
-  const country: Country | undefined = countries.find((c: Country) => c.name === countryName);
-  
+  const country: Country | undefined = countries.find(
+    (c: Country) => c.name === countryName
+  );
+
   return country ? country.code : null;
 };
 
-export default GetCountryCode; 
+export default GetCountryCode;

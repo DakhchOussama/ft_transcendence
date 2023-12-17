@@ -1,15 +1,16 @@
 "use client";
 import { Space_Mono } from "next/font/google";
-import { useState} from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import "../../styles/Homepage.css";
+import "../../styles/2fa-update.css";
 import Lottie from "react-lottie-player";
 import codeAnimation from "../../../public/CodeAnimation.json";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 const mono = Space_Mono({
+  preload: false,
   subsets: ["latin"],
   style: ["normal"],
   weight: ["400", "700"],
@@ -31,7 +32,7 @@ const Home = () => {
       const data = {
         twoFactorAuthenticationCode: code,
       };
-      const response : any = await axios.post(
+      const response: any = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_SERV}/2fa/login`,
         data,
         {
@@ -40,21 +41,20 @@ const Home = () => {
           },
         }
       );
-      console.log(response.data)
       if (response.status === 201) {
-        Cookies.remove('twofa_token');
-        Cookies.set('access_token', response.data.accessToken);
-        router.push("/dashboard"); 
+        Cookies.remove("twofa_token");
+        Cookies.set("access_token", response.data.accessToken);
+        router.push("/dashboard");
       }
     } catch (err) {
       setError("** Invalid Code **");
       setTimeout(() => setError(""), 1000);
-      // console.clear();
+      console.clear();
     }
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#2003b0] via-[#0D0149] to-[#2003b0] min-w-[100vw] h-[100vh]  flex  items-center p-[5%] overflow-scroll flex-col">
+    <div className="bg-gradient-to-br from-[#2003b0] via-[#0D0149] to-[#2003b0] min-w-[100vw] h-[100vh]  flex  items-center p-[5%] overflow-scroll flex-col myclass">
       <motion.form
         className=" card-shadow w-[80vw]  h-[70vh] min-h-[600px] max-w-[600px] bg-[#ccc4f7] rounded-xl flex justify-evenly items-center text-[#0D0149] flex-col  my-auto p-[3%]"
         onSubmit={HandleSubmit}

@@ -1,3 +1,5 @@
+"use client";
+
 import { Press_Start_2P } from "next/font/google";
 import Image from "next/image";
 import HomePageIntraLoginButton from "./HomePageIntraLoginButton";
@@ -11,11 +13,13 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
 const pixelfont = Press_Start_2P({
+  preload: false,
   subsets: ["latin"],
   weight: ["400"],
 });
 
 const mono = Space_Mono({
+  preload: false,
   subsets: ["latin"],
   style: ["normal"],
   weight: ["400", "700"],
@@ -72,7 +76,10 @@ export default function MobileView() {
             style={{ width: 400, height: 275 }}
           />
         </motion.div>
-        <Link href={`${process.env.NEXT_PUBLIC_BACKEND_SERV}/auth/login`} className="no-underline">
+        <Link
+          href={`${process.env.NEXT_PUBLIC_BACKEND_SERV}/auth/login`}
+          className="no-underline"
+        >
           <HomePageIntraLoginButton />
         </Link>
       </section>
@@ -188,7 +195,7 @@ export default function MobileView() {
           <div className="flex items-center justify-evenly  min-h-1/2 w-full my-[35px]">
             <AboutPersonInfo
               Picture="/Abdellah.jpg"
-              TwitterLink="https://twitter.com/withabdellah"
+              TwitterLink="https://twitter.com/c0d3crush3r"
               LinkedinLink="https://www.linkedin.com/in/abdellah-bellakrim-0027b6233"
               GithubLink="https://www.github.com/AbdellahBellakrim"
             />

@@ -7,25 +7,55 @@ import {
   SubscribeMessage,
   ConnectedSocket,
   MessageBody,
+  WsResponse,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import { Injectable, UseGuards } from '@nestjs/common';
 import { UserCrudService } from 'src/prisma/user-crud.service';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
-@WebSocketGateway({ cors: true, origins: 'http://localhost:3000' })
+import GameInvitationDto, {
+  gameInvitationDto,
+} from 'src/game/dto/GameInvitation.dto';
+import { ZodValidationPipe } from 'src/game/pipes/zod-validation-pipe';
+import { GameService } from 'src/game/game.service';
+import GameInvitationResponseDto, {
+  gameInvitationResponseDto,
+} from 'src/game/dto/GameInvitationResponse.dto';
+import { Status } from '@prisma/client';
+import ClientSocket from 'src/game/interfaces/clientSocket.interface';
+import { GatewaysGuard } from 'src/game/guards/gateways.guard';
+import Game from 'src/game/Game/classes/Game';
+import socketIOMiddleware, { wsmiddleware } from 'src/game/gateways.middleware';
+import JoiningLeavingGameResponseDto, {
+  joiningLeavingGameResponseDto,
+} from 'src/game/dto/JoiningLeavingGameResponse.dto';
+import GameInvitationFromChatDto, {
+  gameInvitationFromChatDto,
+} from 'src/game/dto/GameInvitationFromChat.dto';
+@WebSocketGateway({ cors: true, origins: `${process.env.FRONT_SERV}` })
 @Injectable()
-// @UseGuards(JwtAuthGuard)
+@UseGuards(GatewaysGuard)
 export class WebSocketGatewayClass
-  implements OnGatewayConnection, OnGatewayDisconnect
+  implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit
 {
   @WebSocketServer() server: Server;
   constructor(
     private readonly user: UserCrudService,
     private readonly authservice: AuthService,
     private readonly service: PrismaService,
+    private readonly gameService: GameService,
   ) {}
+
   private clients: Map<string, string> = new Map();
+
+  async afterInit(server: Server) {
+    const wsmidware: wsmiddleware = await socketIOMiddleware(this.gameService);
+    server.use(wsmidware);
+    const gameNs: any = server.of('/Game');
+    gameNs.mainServer = server.of('/');
+  }
 
   async handleConnection(client: Socket) {
     const token: any = client.handshake.query.token;
@@ -35,13 +65,31 @@ export class WebSocketGatewayClass
       const payload: any = this.authservice.extractPayload(JwtToken);
       if (payload) {
         const clientRoom = `room_${payload.userId}`;
-        // console.log('clientRoom : ', clientRoom);
         client.join(clientRoom);
         this.clients.set(client.id, clientRoom);
+        const gameInvRoom: string = `gameInv-${payload.userId}`;
+        client.join(gameInvRoom);
+        const game: Game | undefined = this.gameService.playerHasLeavingGame(
+          payload.userId,
+        );
+        if (game !== undefined) {
+          setTimeout(() => {
+            if (game.status === 'paused' && game.stopedAt !== null) {
+              const duration: number = 58000;
+              const remainingTime: number =
+                duration - Number(Date.now() - game.stopedAt.getTime());
+              const payload: any = {
+                player1_id: game.leftPlayerSocket.userId,
+                player2_id: game.rightPlayerSocket.userId,
+                remainingTime,
+              };
+              client.emit('joining_leaving_game', payload);
+            }
+          }, 2500);
+        }
       }
     }
   }
-
   async handleDisconnect(client: Socket) {
     const UserRoom = this.clients.get(client.id);
     if (UserRoom) {
@@ -55,12 +103,9 @@ export class WebSocketGatewayClass
           this.clients.forEach((value: string, key: string) => {
             if (value === UserRoom) counter++;
           });
-
           if (counter === 1) {
             await this.user.changeVisibily(user_Id, 'OFFLINE');
-            //       this.server.to(targetClientRoom).emit('offline', payload.userId);
             const usersId: any[] = await this.user.findFriendsList(user_Id);
-            // console.log("users ID : ", usersId);
             const users: any[] = [];
 
             await Promise.all(
@@ -72,13 +117,12 @@ export class WebSocketGatewayClass
             this.server.to(targetClientRoom).emit('offline', users);
           }
         });
+        this.clients.delete(client.id);
       }
-      this.clients.delete(client.id);
     }
   }
 
   @SubscribeMessage('sendNotification')
-  // @UseGuards(JwtAuthGuard)
   async handleSendNotification(@MessageBody() notificationData: any) {
     const targetClientRoom = `room_${notificationData.user_id}`;
     const token: any = notificationData.token;
@@ -86,18 +130,22 @@ export class WebSocketGatewayClass
     const JwtToken: string = tokenParts[1];
 
     const payload: any = this.authservice.extractPayload(JwtToken);
-    try {
-      await this.user.createNotification(
-        notificationData.user_id,
-        payload.userId,
-        notificationData.type,
-      );
-      const getnotificationtable = await this.user.findUserByID(payload.userId);
-      this.server
-        .to(targetClientRoom)
-        .emit('notification', getnotificationtable);
-    } catch (error) {
-      console.error('Error creating notification:', error);
+    if (payload) {
+      try {
+        await this.user.createNotification(
+          notificationData.user_id,
+          payload.userId,
+          notificationData.type,
+        );
+        const getnotificationtable = await this.user.findUserByID(
+          payload.userId,
+        );
+        this.server
+          .to(targetClientRoom)
+          .emit('notification', getnotificationtable);
+      } catch (error) {
+        console.error('Error creating notification:', error);
+      }
     }
   }
 
@@ -109,9 +157,7 @@ export class WebSocketGatewayClass
 
     const payload: any = this.authservice.extractPayload(JwtToken);
     if (notificationData.response === 'accept') {
-      // console.log('user_id', payload.userId);
       try {
-        // console.log('My Id : ' + payload.userId + ' notificationData : ' + notificationData.user_id);
         const check = await this.service.prismaClient.friendships.findMany({
           where: {
             OR: [
@@ -169,15 +215,12 @@ export class WebSocketGatewayClass
       const JwtToken: string = tokenParts[1];
       const payload: any = this.authservice.extractPayload(JwtToken);
       const usersId: any[] = await this.user.findFriendsList(payload.userId);
-      // console.log('users : ', users);
       if (usersId) {
         usersId.map(async (userId) => {
           if (notificationData.status === 'INGAME') {
             const targetClientRoom = `room_${userId}`;
-            //     // console.log('target : ', targetClientRoom);
             await this.user.changeVisibily(payload.userId, 'IN_GAME');
             const usersId: any[] = await this.user.findFriendsList(userId);
-            // console.log("users ID : ", usersId);
             const users: any[] = [];
 
             await Promise.all(
@@ -187,7 +230,7 @@ export class WebSocketGatewayClass
               }),
             );
             this.server.to(targetClientRoom).emit('online', users);
-            const myuser = this.user.findUserByID(payload.userId);
+            const myuser = await this.user.findUserByID(payload.userId);
             this.server.emit('changestatus', myuser);
           }
           const user = await this.service.prismaClient.user.findUnique({
@@ -195,16 +238,10 @@ export class WebSocketGatewayClass
               id: payload.userId,
             },
           });
-          if (
-            notificationData.status != 'INGAME'
-          ) {
+          if (notificationData.status != 'INGAME') {
             const targetClientRoom = `room_${userId}`;
-            //     // console.log('target : ', targetClientRoom);
             await this.user.changeVisibily(payload.userId, 'ONLINE');
-            //       // const user = await this.user.findUserByID(userId);
-            //       // console.log('users : ', user);
             const usersId: any[] = await this.user.findFriendsList(userId);
-            // console.log("users ID : ", usersId);
             const users: any[] = [];
 
             await Promise.all(
@@ -218,5 +255,77 @@ export class WebSocketGatewayClass
         });
       }
     }
+  }
+
+  @SubscribeMessage('GameInvitation')
+  async handleGameInvitation(
+    @MessageBody(new ZodValidationPipe(gameInvitationDto))
+    gameInvitationDto: GameInvitationDto,
+    @ConnectedSocket() client: Socket,
+  ): Promise<string> {
+    const invitorStatus: Status = await this.user.getUserStatus(
+      gameInvitationDto.invitor_id,
+    );
+    const inviteeStatus: Status = await this.user.getUserStatus(
+      gameInvitationDto.invitee_id,
+    );
+    if (inviteeStatus === Status.IN_GAME) {
+      return "the invitee isn't available for game"
+    }
+    if (invitorStatus === Status.IN_GAME) {
+      return 'You are already in game';
+    }
+    this.gameService.sendInvitation(gameInvitationDto, this.server, client);
+    return 'invitation has been sent';
+  }
+
+  @SubscribeMessage('GameInvitationResponse')
+  handleGameInvitationResponse(
+    @MessageBody(new ZodValidationPipe(gameInvitationResponseDto))
+    gameInvitationResponseDto: GameInvitationResponseDto,
+    @ConnectedSocket() client: Socket,
+  ): string {
+    this.gameService.sendGameInvitationResponse(
+      gameInvitationResponseDto,
+      this.server,
+      client,
+    );
+    return 'response has been sent';
+  }
+
+  @SubscribeMessage('get_status')
+  async handleGetStatus(client: Socket): Promise<string> {
+    try {
+      const userId: string = GatewaysGuard.validateJwt(client);
+      const status: Status = await this.user.getUserStatus(userId);
+      return status;
+    } catch {
+      return 'invalid token';
+    }
+  }
+
+  @SubscribeMessage('joining_leaving_game_response')
+  handleJoiningLeavingGameResponse(
+    @MessageBody(new ZodValidationPipe(joiningLeavingGameResponseDto))
+    joiningLeavingGameResponseDto: JoiningLeavingGameResponseDto,
+    @ConnectedSocket() client: ClientSocket,
+  ): string {
+    return this.gameService.joining_leaving_game_response(
+      client,
+      joiningLeavingGameResponseDto,
+    );
+  }
+
+  @SubscribeMessage('invite_to_game_through_chat')
+  handleInviteToGameThroughChat(
+    @MessageBody(new ZodValidationPipe(gameInvitationFromChatDto))
+    gameInvitationFromChatDto: GameInvitationFromChatDto,
+    @ConnectedSocket() client: ClientSocket,
+  ) {
+    this.gameService.handleInvitationFromChat(
+      gameInvitationFromChatDto,
+      client,
+    );
+    return 'the operation done successfully';
   }
 }

@@ -6,10 +6,10 @@ import Cookies from "js-cookie";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import withAuth from "@/components/GlobalComponents/HigherOrderComponent";
-import "../../styles/Homepage.css";
-
+import "../../styles/2fa-update.css";
 
 const mono = Space_Mono({
+  preload: false,
   subsets: ["latin"],
   style: ["normal"],
   weight: ["400", "700"],
@@ -57,10 +57,6 @@ const Home = () => {
     try {
       if (!ProfilePicture) setError("Select an image");
       else {
-        // console.log("FormData entries:");
-        // for (const [key, value] of Data.entries()) {
-        //   console.log(key, value);
-        // }
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_SERV}/auth/updatecredentials`,
           Data,
@@ -86,9 +82,9 @@ const Home = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#2003b0] via-[#0D0149] to-[#2003b0] min-w-[100vw] h-[100vh]  flex  items-center p-[5%] overflow-scroll flex-col">
+    <div className="bg-gradient-to-br from-[#2003b0] via-[#0D0149] to-[#2003b0] min-w-[100vw] h-[100vh]  flex  items-center p-[5%] overflow-scroll flex-col myclass">
       <motion.form
-        className=" card-shadow w-[80vw]  h-[70vh] min-h-[600px] max-w-[600px] bg-[#ccc4f7] rounded-xl flex justify-evenly items-center text-[#0D0149] flex-col  my-auto p-[3%]"
+        className=" card-shadow w-[80vw]  h-[70vh] min-h-[600px] max-h-[800px] max-w-[600px] bg-[#ccc4f7] rounded-xl flex justify-evenly items-center text-[#0D0149] flex-col  my-auto p-[3%]"
         onSubmit={HandleSubmit}
         initial={{
           opacity: 0,

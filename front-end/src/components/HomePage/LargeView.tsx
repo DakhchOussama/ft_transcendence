@@ -1,3 +1,5 @@
+"use client";
+
 import { Press_Start_2P } from "next/font/google";
 import Image from "next/image";
 import HomePageIntraLoginButton from "./HomePageIntraLoginButton";
@@ -12,11 +14,13 @@ import BackgroundCircle from "./BackgroundCircle";
 import { useInView } from "react-intersection-observer";
 
 const pixelfont = Press_Start_2P({
+  preload: false,
   subsets: ["latin"],
   weight: ["400"],
 });
 
 const mono = Space_Mono({
+  preload: false,
   subsets: ["latin"],
   style: ["normal"],
   weight: ["400", "700"],
@@ -97,7 +101,10 @@ export default function LargeView() {
               {text}
               <Cursor cursorColor="#DA343E" cursorStyle="_" />
             </p>
-            <Link href={`${process.env.NEXT_PUBLIC_BACKEND_SERV}/auth/login`} className="no-underline">
+            <Link
+              href={`${process.env.NEXT_PUBLIC_BACKEND_SERV}/auth/login`}
+              className="no-underline"
+            >
               <HomePageIntraLoginButton />
             </Link>
           </motion.div>
@@ -164,9 +171,8 @@ export default function LargeView() {
               whileInView={{
                 x: 0,
                 opacity: 1,
-
               }}
-              viewport={{once: true}}
+              viewport={{ once: true }}
               transition={{
                 duration: 1,
               }}
@@ -210,7 +216,7 @@ export default function LargeView() {
         </div>
 
         <div className="flex items-center justify-between gap-8 w-full">
-        <motion.h2
+          <motion.h2
             ref={ref}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 20 }}
@@ -222,7 +228,7 @@ export default function LargeView() {
           <div className="flex items-center justify-between gap-24 w-8/12">
             <AboutPersonInfo
               Picture="/Abdellah.jpg"
-              TwitterLink="https://twitter.com/withabdellah"
+              TwitterLink="https://twitter.com/c0d3crush3r"
               LinkedinLink="https://www.linkedin.com/in/abdellah-bellakrim-0027b6233"
               GithubLink="https://www.github.com/AbdellahBellakrim"
             />

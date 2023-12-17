@@ -1,8 +1,10 @@
+"use client";
 import { Space_Mono } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 
 const mono = Space_Mono({
+  preload: false,
   subsets: ["latin"],
   style: ["normal"],
   weight: ["400", "700"],

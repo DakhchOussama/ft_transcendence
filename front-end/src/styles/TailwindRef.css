@@ -12,6 +12,11 @@
   box-sizing: content-box;
 }
 
+/* to be contin[ */
+body {
+  overflow: auto;
+}
+
 /* For Chrome and Brave */
 *::-webkit-scrollbar {
   width: 0.4em;
@@ -48,7 +53,22 @@
   background-color: rgba(99, 81, 81, 0.4);
 }
 
-
 .content {
   min-height: calc(100vh - 91px);
+}
+
+.content-height {
+  height: calc(100vh - 91px);
+}
+
+.score-board-height {
+  height: 13%;
+}
+
+.responsive-font {
+  font-size: 1.5vw;
+}
+
+.score-board-item-with {
+  width: calc(100% / 8);
 }
