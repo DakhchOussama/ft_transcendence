@@ -65,3 +65,6 @@ Developed a comprehensive website for playing multiplayer Pong games. The projec
 - **User Interface Design:** Personally contributed to designing the UI for the project, focusing on profile pages, user addition, and specific front-end pages within the chat functionality.
 - **Team Collaboration:** Worked collaboratively with a team of peers to manage project tasks, resolve issues, and ensure timely project completion.
 
+If you want more informations, send your email Notion to my Email:
+
+📧 oussamadakhch1999@gmail.com
